@@ -39,7 +39,7 @@ export default function Navbar() {
 
   return (
     <div className="relative">
-      <header className="sticky top-0 z-50 w-full bg-[#00352F] border-b border-white/10 shadow-lg backdrop-blur-md">
+      <header className="fixed top-0 z-50 w-full bg-[#00352F] border-b border-white/10 shadow-lg backdrop-blur-md">
         <div className="w-full px-4 sm:px-6 h-16 flex items-center justify-between">
           {/* Left Side: Menu Icon & Logo */}
           <div className="flex items-center gap-3 sm:gap-4">
@@ -89,7 +89,7 @@ const DropdownMenu = ({ categories }: { categories: CategoryItem[] }) => {
           <Link
             key={item.id}
             href="#"
-            className="flex flex-col items-center justify-center h-22 p-2 rounded-lg bg-[#003840] hover:bg-[#004d58] border border-[#00ffc4]/30 hover:hover:border-[#00ffc4] transition-all text-center group cursor-pointer"
+            className="flex flex-col items-center justify-center h-22 p-2 rounded-lg bg-[#003840] hover:bg-[#004d58] border border-teal-foreground/30 hover:hover:border-teal-foreground transition-all text-center group cursor-pointer"
           >
             {/* Icon / Image Placeholder */}
             <span className="text-2xl mb-1.5 group-hover:scale-110 transition-transform">
@@ -106,5 +106,3 @@ const DropdownMenu = ({ categories }: { categories: CategoryItem[] }) => {
     </ScrollArea>
   );
 };
-
-

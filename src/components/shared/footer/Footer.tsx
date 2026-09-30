@@ -66,7 +66,7 @@ export function Footer() {
                 <li key={link}>
                   <Link
                     href="#"
-                    className="hover:text-[#00ffc4] transition-colors duration-200"
+                    className="hover:text-teal-foreground transition-colors duration-200"
                   >
                     {link}
                   </Link>
@@ -80,7 +80,7 @@ export function Footer() {
             {/* Top Info Header with Logo & Bio */}
             <div className="flex gap-4 items-start">
               <div className="shrink-0 p-1.5 bg-[#053733] border border-[#ffb703]/40 rounded-xl shadow-md">
-                <div className="w-16 h-16 rounded-lg bg-[#00ffc4]/10 flex items-center justify-center border border-[#00ffc4]/30 font-extrabold text-[#00ffc4] text-xl">
+                <div className="w-16 h-16 rounded-lg bg-teal-foreground/10 flex items-center justify-center border border-teal-foreground/30 font-extrabold text-teal-foreground text-xl">
                   CW
                 </div>
               </div>
@@ -100,7 +100,7 @@ export function Footer() {
                 {/* Partner Button */}
                 <button
                   type="button"
-                  className="px-6 py-2 bg-[#004d46] hover:bg-[#005c54] text-[#00ffc4] font-bold text-sm tracking-wide rounded-md border border-[#00ffc4]/30 shadow-md transition-all cursor-pointer"
+                  className="px-6 py-2 bg-[#004d46] hover:bg-[#005c54] text-teal-foreground font-bold text-sm tracking-wide rounded-md border border-teal-foreground/30 shadow-md transition-all cursor-pointer"
                 >
                   PARTNER
                 </button>
@@ -108,7 +108,7 @@ export function Footer() {
                 {/* Live Chat Button */}
                 <button
                   type="button"
-                  className="flex items-center gap-2 px-5 py-2 bg-[#004d46] hover:bg-[#005c54] text-[#00ffc4] font-bold text-sm rounded-md border border-[#00ffc4]/30 shadow-md transition-all cursor-pointer"
+                  className="flex items-center gap-2 px-5 py-2 bg-[#004d46] hover:bg-[#005c54] text-teal-foreground font-bold text-sm rounded-md border border-teal-foreground/30 shadow-md transition-all cursor-pointer"
                 >
                   <div className="p-1 bg-[#ffb703] rounded-full text-white">
                     <MessageCircleMore className="size-3.5 fill-current" />
@@ -141,7 +141,7 @@ export function Footer() {
               {gameProviders.map((provider) => (
                 <div
                   key={provider}
-                  className="h-7 bg-[#001c1a] border border-[#0e5c55]/40 rounded flex items-center justify-center px-1 text-[9px] font-extrabold text-slate-400 tracking-tighter hover:text-[#00ffc4] hover:border-[#00ffc4]/40 transition-all cursor-pointer select-none text-center truncate"
+                  className="h-7 bg-[#001c1a] border border-[#0e5c55]/40 rounded flex items-center justify-center px-1 text-[9px] font-extrabold text-slate-400 tracking-tighter hover:text-teal-foreground hover:border-teal-foreground/40 transition-all cursor-pointer select-none text-center truncate"
                 >
                   {provider}
                 </div>

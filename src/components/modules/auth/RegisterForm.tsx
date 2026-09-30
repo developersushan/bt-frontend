@@ -51,7 +51,7 @@ const RegisterForm = ({ onSwitchToLogin }: RegisterFormProps) => {
 
           <button
             onClick={onSwitchToLogin}
-            className="text-[#00ffc4] hover:text-[#00ffaa] font-semibold hover:underline"
+            className="text-teal-foreground hover:text-[#00ffaa] font-semibold hover:underline"
           >
             Login
           </button>
@@ -75,7 +75,7 @@ const RegisterForm = ({ onSwitchToLogin }: RegisterFormProps) => {
             {(field) => (
               <AppField
                 label="Phone Number"
-                inputClassName="bg-[#022421] border-[#0c4e48] text-white placeholder:text-teal-200/40 focus:border-[#00ffc4] "
+                inputClassName="bg-[#022421] border-[#0c4e48] text-white placeholder:text-teal-200/40 focus:border-teal-foreground "
                 field={field}
                 type="number"
                 placeholder="Phone number"
@@ -93,7 +93,7 @@ const RegisterForm = ({ onSwitchToLogin }: RegisterFormProps) => {
             {(field) => (
               <AppField
                 label="Password"
-                inputClassName="bg-[#022421] border-[#0c4e48] text-white placeholder:text-teal-200/40 focus:border-[#00ffc4] "
+                inputClassName="bg-[#022421] border-[#0c4e48] text-white placeholder:text-teal-200/40 focus:border-teal-foreground "
                 field={field}
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
@@ -107,7 +107,7 @@ const RegisterForm = ({ onSwitchToLogin }: RegisterFormProps) => {
                     type="button"
                     size="icon"
                     variant={"ghost"}
-                    className="hover:bg-transparent text-emerald-300 hover:text-[#00ffc4]"
+                    className="hover:bg-transparent text-emerald-300 hover:text-teal-foreground"
                     onClick={() => setShowPassword((prev: boolean) => !prev)}
                   >
                     {showPassword ? (
@@ -124,7 +124,7 @@ const RegisterForm = ({ onSwitchToLogin }: RegisterFormProps) => {
             {(field) => (
               <AppField
                 label="Confirm Password"
-                inputClassName="bg-[#022421] border-[#0c4e48] text-white placeholder:text-teal-200/40 focus:border-[#00ffc4] "
+                inputClassName="bg-[#022421] border-[#0c4e48] text-white placeholder:text-teal-200/40 focus:border-teal-foreground "
                 field={field}
                 type={confirmShowPassword ? "text" : "password"}
                 placeholder="Confirm password"
@@ -138,7 +138,7 @@ const RegisterForm = ({ onSwitchToLogin }: RegisterFormProps) => {
                     type="button"
                     size="icon"
                     variant={"ghost"}
-                    className="hover:bg-transparent text-emerald-300 hover:text-[#00ffc4]"
+                    className="hover:bg-transparent text-emerald-300 hover:text-teal-foreground"
                     onClick={() =>
                       setConfirmShowPassword((prev: boolean) => !prev)
                     }

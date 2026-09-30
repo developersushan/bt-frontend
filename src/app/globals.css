@@ -81,6 +81,7 @@ input[type="number"] {
 
   /* custom */
   --color-primary-cyan: var(--primary-cyan);
+  --color-teal-foreground: var(--teal-foreground);
 }
 
 :root {
@@ -119,6 +120,7 @@ input[type="number"] {
 
   /*custom*/
   --primary-cyan: #044243;
+  --teal-foreground: #00ffc4;
 }
 
 .dark {

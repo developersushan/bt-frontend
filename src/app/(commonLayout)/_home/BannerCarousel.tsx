@@ -39,7 +39,7 @@ export function BannerCarousel() {
   }, [api]);
 
   return (
-    <div className="relative container overflow-hidden rounded-2xl">
+    <div className="relative rounded-2xl">
       <Carousel
         setApi={setApi}
         opts={{
@@ -76,7 +76,7 @@ export function BannerCarousel() {
             onClick={() => api?.scrollTo(index)}
             className={`h-1.5 transition-all duration-300 rounded-full ${
               current === index
-                ? "w-6 bg-[#00ffc4]"
+                ? "w-6 bg-teal-foreground"
                 : "w-4 bg-white/50 hover:bg-white/80"
             }`}
             aria-label={`Go to slide ${index + 1}`}
