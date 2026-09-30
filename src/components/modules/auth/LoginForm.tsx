@@ -48,7 +48,7 @@ const LoginForm = ({ onSwitchToRegister }: LoginFormProps) => {
 
           <button
             onClick={onSwitchToRegister}
-            className="text-[#00ffc4] hover:text-[#00ffaa] font-semibold hover:underline"
+            className="text-teal-foreground hover:text-[#00ffaa] font-semibold hover:underline"
           >
             Register
           </button>
@@ -71,7 +71,7 @@ const LoginForm = ({ onSwitchToRegister }: LoginFormProps) => {
           <form.Field name="phoneNumber">
             {(field) => (
               <AppField
-                inputClassName="bg-[#022421] border-[#0c4e48] text-white placeholder:text-teal-200/40 focus:border-[#00ffc4] "
+                inputClassName="bg-[#022421] border-[#0c4e48] text-white placeholder:text-teal-200/40 focus:border-teal-foreground "
                 field={field}
                 label="Phone"
                 type="email"
@@ -89,7 +89,7 @@ const LoginForm = ({ onSwitchToRegister }: LoginFormProps) => {
           <form.Field name="password">
             {(field) => (
               <AppField
-                inputClassName="bg-[#022421] border-[#0c4e48] text-white placeholder:text-teal-200/40 focus:border-[#00ffc4] "
+                inputClassName="bg-[#022421] border-[#0c4e48] text-white placeholder:text-teal-200/40 focus:border-teal-foreground "
                 field={field}
                 label="Password"
                 type={showPassword ? "text" : "password"}
@@ -104,7 +104,7 @@ const LoginForm = ({ onSwitchToRegister }: LoginFormProps) => {
                     type="button"
                     size="icon"
                     variant={"ghost"}
-                    className="hover:bg-transparent text-emerald-300 hover:text-[#00ffc4]"
+                    className="hover:bg-transparent text-emerald-300 hover:text-teal-foreground"
                     onClick={() => setShowPassword((prev: boolean) => !prev)}
                   >
                     {showPassword ? (
