@@ -1,7 +1,6 @@
 import {
   GameCardContainer,
   GameCardMedia,
-  GameCardBadge,
   GameCardPlayOverlay,
   GameCardFooter,
 } from "@/components/ui/game-card-design";
@@ -10,13 +9,12 @@ import { Game } from "@/fake-data/category";
 export function GameCard({ game }: { game: Game }) {
   return (
     <GameCardContainer>
-      <GameCardMedia src={game.thumbnail} alt={game.title}>
-        {/* Trial Badge or Category Tag */}
-        {game.isFreeTrial ? (
+      <GameCardMedia src={"#"} alt={game.title}>
+        {/* {game.isFreeTrial ? (
           <GameCardBadge variant="trial">FREE TRIAL</GameCardBadge>
         ) : game.tag ? (
           <GameCardBadge variant={game.tag}>{game.tag}</GameCardBadge>
-        ) : null}
+        ) : null} */}
 
         {/* Dynamic Hover Buttons */}
         <GameCardPlayOverlay

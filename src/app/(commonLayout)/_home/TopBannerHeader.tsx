@@ -3,7 +3,7 @@ import { Megaphone } from "lucide-react";
 
 const TopBannerHeader = () => {
   return (
-    <div className="relative flex items-center my-6 overflow-hidden rounded-full bg-[#002C35] h-9 border border-[#0e5c55] select-none">
+    <div className="relative flex items-center mb-6 overflow-hidden rounded-full bg-[#002C35] sm:h-9 h-7 border border-[#0e5c55] select-none">
       {/* Fixed Left Megaphone Icon */}
       <div className="absolute left-0 z-20 flex items-center justify-center h-full pl-3 pr-2 bg-[#002C35] pointer-events-none">
         <Megaphone className="size-4.5 text-amber-400 fill-amber-400/20 -rotate-12 shrink-0" />

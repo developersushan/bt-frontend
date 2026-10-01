@@ -118,7 +118,7 @@ export function Footer() {
               </div>
 
               {/* Social & Age Restriction Icons */}
-              <div className="flex items-center gap-2 ml-auto sm:ml-0">
+              <div className="flex items-center gap-2">
                 {socialImages.map((social, index) => (
                   <Link key={index} href={social.link}>
                     <Image
