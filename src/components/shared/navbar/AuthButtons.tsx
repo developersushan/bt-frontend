@@ -15,7 +15,7 @@ function AuthButtons() {
       <div className="flex items-center gap-2 sm:gap-3">
         <button
           onClick={() => setActiveModal("login")}
-          className="px-3.5 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold text-[#00ffaa] bg-[#0e4431] border border-[#00ffaa] rounded-md hover:bg-[#00ffaa] hover:text-[#031c13] transition-colors cursor-pointer"
+          className="px-3.5 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold text-teal-foreground bg-[#0e4431] border border-teal-foreground rounded-md hover:bg-teal-foreground hover:text-[#031c13] transition-colors cursor-pointer"
         >
           Login
         </button>
@@ -33,7 +33,7 @@ function AuthButtons() {
         open={activeModal !== null}
         onOpenChange={(open) => !open && setActiveModal(null)}
       >
-        <DialogContent className="rounded-2xl p-0! border-none bg-transparent max-w-sm w-full [&>button]:bg-[#022421] [&>button]:text-white [&>button]:hover:bg-[#003840] [&>button]:p-2 [&>button]:rounded-full [&>button]:border [&>button]:border-[#0e5c55] [&>button]:top-3 [&>button]:right-3 transition-all">
+        <DialogContent className="rounded-2xl p-0! border-none bg-transparent max-w-sm w-full [&>button]:bg-[#022421] [&>button]:text-white [&>button]:hover:bg-[#003840] [&>button]:p-2 sm:[&>button]:mr-0 [&>button]:mr-4 [&>button]:rounded-full [&>button]:border [&>button]:border-[#0e5c55] [&>button]:top-3 [&>button]:right-3 transition-all">
           {activeModal === "login" && (
             <LoginForm onSwitchToRegister={() => setActiveModal("register")} />
           )}

@@ -7,7 +7,7 @@ export default function NotFound() {
       {/* Glow Effect Background Box */}
       <div className="relative flex flex-col items-center max-w-md w-full bg-[#062b1e] border border-white/10 p-8 sm:p-10 rounded-2xl shadow-2xl backdrop-blur-md">
         {/* Glowing 404 Text */}
-        <h1 className="text-8xl font-black text-transparent bg-clip-text bg-linear-to-r from-red-500 via-amber-400 to-[#00ffaa] drop-shadow-md tracking-wider">
+        <h1 className="text-8xl font-black text-transparent bg-clip-text bg-linear-to-r from-red-500 via-amber-400 to-teal-foreground drop-shadow-md tracking-wider">
           404
         </h1>
 

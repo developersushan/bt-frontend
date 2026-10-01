@@ -1,5 +1,5 @@
 import { BannerCarousel } from "./_home/BannerCarousel";
-import { GameCategories } from "./_home/GameCategories";
+import { BottomBannerHeader } from "./_home/BottomBannerHeader";
 import TopBannerHeader from "./_home/TopBannerHeader";
 import AllCategory from "./_home/AllCategory";
 
@@ -8,7 +8,7 @@ const CommonPage = () => {
     <div className="container mt-22">
       <TopBannerHeader />
       <BannerCarousel />
-      <GameCategories />
+      <BottomBannerHeader />
       <AllCategory />
     </div>
   );
