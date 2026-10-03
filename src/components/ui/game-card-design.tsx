@@ -108,17 +108,7 @@ export function GameCardBadge({
   );
 }
 
-/* -------------------------------------------------------------------------- */
-/* 4. GAME CARD PLAY & FREE TRIAL OVERLAY BUTTONS                            */
-/* -------------------------------------------------------------------------- */
 
-// export interface GameCardPlayOverlayProps extends React.ComponentProps<"div"> {
-//   isFreeTrial?: boolean;
-//   onPlay?: (e: React.MouseEvent) => void;
-//   onTrial?: (e: React.MouseEvent) => void;
-//   playLabel?: string;
-//   trialLabel?: string;
-// }
 
 export interface GameCardPlayOverlayProps extends Omit<
   React.ComponentProps<"div">,
