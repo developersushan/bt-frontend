@@ -7,7 +7,6 @@ import {
 import { Game } from "@/fake-data/category";
 
 export function GameCard({ game }: { game: Game }) {
-  console.log(game);
   return (
     <GameCardContainer>
       <GameCardMedia src={"#"} alt={game.title}>

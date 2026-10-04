@@ -2,7 +2,6 @@
 "use client";
 
 import { GameCard } from "@/components/shared/GameCard";
-import Image from "next/image";
 import Marquee from "react-fast-marquee";
 
 export default function JackpotSection({ data }: { data: any }) {

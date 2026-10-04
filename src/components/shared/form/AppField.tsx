@@ -24,6 +24,7 @@ type AppFieldProps = {
   prepend?: React.ReactNode;
   className?: string;
   inputClassName?: string;
+  appendClassName?: string;
   disabled?: boolean;
 };
 
@@ -36,6 +37,7 @@ const AppField = ({
   prepend,
   inputClassName,
   className,
+  appendClassName,
   disabled = false,
 }: AppFieldProps) => {
   const firstError =
@@ -78,7 +80,7 @@ const AppField = ({
         />
 
         {append && (
-          <div className="absolute inset-y-0 right-0 pr-3 z-20">{append}</div>
+          <div className={cn("absolute inset-y-0 right-0 pr-3 z-20",appendClassName)}>{append}</div>
         )}
 
         {hasError && (
