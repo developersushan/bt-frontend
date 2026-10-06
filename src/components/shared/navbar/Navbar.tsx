@@ -12,7 +12,7 @@ import Link from "next/link";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import AuthButtons from "./AuthButtons";
 import { useRouter } from "next/navigation";
-import { NavigationMenuDemo } from "../../modules/dashboard/UserDropdown";
+import { NavigationMenuDemo } from "../../modules/dashboard/ProfileMain";
 import { CategoryItem, fakeCategories } from "@/fake-data/fakeCategories";
 
 export default function Navbar() {

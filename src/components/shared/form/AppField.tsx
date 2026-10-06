@@ -17,7 +17,7 @@ const getErrorMessage = (error: unknown) => {
 
 type AppFieldProps = {
   field: AnyFieldApi;
-  label: string;
+  label?: string;
   type?: "text" | "email" | "password" | "number";
   placeholder?: string;
   append?: React.ReactNode;
