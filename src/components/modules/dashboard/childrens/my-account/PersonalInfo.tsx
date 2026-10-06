@@ -32,12 +32,13 @@ export function PersonalInfoForm() {
     },
   });
   return (
-    <div className=" my-4 w-full max-w-xl mx-auto p-5 sm:p-7 bg-white rounded-2xl shadow-xl font-sans select-none text-slate-800 border border-slate-100">
+  <div className="m-4">
+      <div className="w-full max-w-xl mx-auto p-5 sm:p-7 bg-white rounded-2xl shadow-xl font-sans select-none text-slate-800 border border-slate-100">
       {/* 🔹 Header Section */}
       <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-6">
         <div className="flex items-center gap-2.5">
           <span className="w-1.5 h-6 bg-teal-600 rounded-full" />
-          <h2 className="text-lg font-bold text-slate-800 tracking-wide">
+          <h2 className="md:text-lg text-base font-bold text-slate-800 tracking-wide">
             Personal Information
           </h2>
         </div>
@@ -197,5 +198,6 @@ export function PersonalInfoForm() {
         </div>
       </form>
     </div>
+  </div>
   );
 }

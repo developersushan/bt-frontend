@@ -2,17 +2,15 @@
 
 import { useState } from "react";
 import { useForm } from "@tanstack/react-form";
-import { KeyRound, Lock, CheckCircle2, Save, Eye, EyeOff } from "lucide-react";
+import { Lock, CheckCircle2, Save, Eye, EyeOff } from "lucide-react";
 import AppField from "@/components/shared/form/AppField";
 
-export function ChangePasswordForm() {
-  const [showCurrent, setShowCurrent] = useState(false);
+function TransactionPassword() {
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
   const form = useForm({
     defaultValues: {
-      currentPassword: "",
       newPassword: "",
       confirmPassword: "",
     },
@@ -30,7 +28,7 @@ export function ChangePasswordForm() {
           <div className="flex items-center gap-2.5">
             <span className="w-1.5 h-6 bg-teal-600 rounded-full" />
             <h2 className="text-lg font-bold text-slate-800 tracking-wide">
-              Change Login Password
+              Transaction Password
             </h2>
           </div>
         </div>
@@ -47,33 +45,6 @@ export function ChangePasswordForm() {
           }}
           className="space-y-4"
         >
-          {/* Current Password Field */}
-          <form.Field name="currentPassword">
-            {(field) => (
-              <AppField
-                label="Current Password"
-                field={field}
-                type={showCurrent ? "text" : "password"}
-                placeholder="Enter current password"
-                prepend={
-                  <button type="button">
-                    <KeyRound size={16} className="text-teal-600" />
-                  </button>
-                }
-                appendClassName="inset-y-2"
-                append={
-                  <button
-                    type="button"
-                    onClick={() => setShowCurrent(!showCurrent)}
-                    className="text-slate-400 hover:text-teal-600 transition-colors"
-                  >
-                    {showCurrent ? <Eye size={16} /> : <EyeOff size={16} />}
-                  </button>
-                }
-              />
-            )}
-          </form.Field>
-
           {/* New Password Field */}
           <form.Field name="newPassword">
             {(field) => (
@@ -81,7 +52,7 @@ export function ChangePasswordForm() {
                 label="New Password"
                 field={field}
                 type={showNew ? "text" : "password"}
-                placeholder="Enter new password (min. 6 characters)"
+                placeholder="Enter new password"
                 prepend={
                   <button type="button">
                     <Lock size={16} className="text-teal-600" />
@@ -135,7 +106,7 @@ export function ChangePasswordForm() {
               className="px-6 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs rounded-lg shadow-sm hover:shadow transition-all flex items-center gap-2 cursor-pointer active:scale-95"
             >
               <Save size={15} />
-              Update Password
+              Submit
             </button>
           </div>
         </form>
@@ -143,3 +114,4 @@ export function ChangePasswordForm() {
     </div>
   );
 }
+export default TransactionPassword;
