@@ -38,7 +38,7 @@ export default function WithdrawalPaymentTabs() {
   });
 
   return (
-    <div className="w-full max-w-6xl mx-auto bg-slate-50/50 rounded-xl font-sans select-none">
+    <div className="w-full p-4 sm:p-6 max-w-6xl mx-auto bg-slate-50/50 rounded-xl font-sans select-none">
       {/* Top Title Header */}
       <div className="border-b border-slate-200 pb-3 mb-4">
         <h2 className="text-sm font-bold text-red-500 border-b-2 border-red-500 inline-block pb-3 -mb-3.5 px-1">
@@ -127,7 +127,7 @@ export default function WithdrawalPaymentTabs() {
             </p>
 
             <Button
-            onClick={()=>setActiveTab("link-ewallet")}
+              onClick={() => setActiveTab("link-ewallet")}
               type="button"
               className="bg-red-500 hover:bg-red-600 text-white rounded-full px-6 py-2 h-auto text-xs font-semibold shadow-md gap-1 cursor-pointer"
             >
@@ -213,9 +213,9 @@ export default function WithdrawalPaymentTabs() {
                       className="cursor-pointer hover:text-slate-600"
                     >
                       {showPassword ? (
-                        <EyeOff className="w-3.5 h-3.5" />
-                      ) : (
                         <Eye className="w-3.5 h-3.5" />
+                      ) : (
+                        <EyeOff className="w-3.5 h-3.5" />
                       )}
                     </button>
                   }

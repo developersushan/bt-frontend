@@ -46,7 +46,7 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
   // const ActiveIcon = activeItem?.icon;
 
   return (
-    <div className="flex w-full min-h-[60vh] max-h-[60vh] overflow-hidden bg-linear-to-b rounded-l-lg from-[#023333] via-[#012526] to-[#011a1b]">
+    <div className="flex w-full min-h-[55vh] max-h-[55vh] overflow-hidden bg-linear-to-b rounded-l-lg from-[#023333] via-[#012526] to-[#011a1b]">
       {/* 🔹 Left Navigation Sidebar */}
       <ScrollArea className="bg-transparent [&>div>div]:hidden">
         <nav className="w-50 text-white flex flex-col shrink-0 relative select-none h-full">

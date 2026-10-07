@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import QueryProviders from "@/providers/QueryProvider";
+import { Toaster } from "@/components/ui/toast";
 
 const inter = Inter({
   variable: "--inter",
@@ -17,7 +19,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${inter.className}`}>
       <body>
-        <TooltipProvider>{children}</TooltipProvider>
+        <QueryProviders>
+            <Toaster />
+          <TooltipProvider>{children}</TooltipProvider>
+        </QueryProviders>
       </body>
     </html>
   );
