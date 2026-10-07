@@ -7,6 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { cn } from "cn";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -16,14 +17,15 @@ type Option = {
 };
 
 type Props = {
+  clasName?: string;
   field: any;
   label: string;
   options: Option[];
 };
 
-export default function AppSelect({ field, label, options }: Props) {
+export default function AppSelect({ field, label, options, clasName }: Props) {
   return (
-    <div className="space-y-1">
+    <div className={cn("space-y-1", clasName)}>
       <Label>{label}</Label>
       <Select
         value={field.state.value || ""}
