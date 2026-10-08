@@ -73,7 +73,7 @@ export function NavigationMenuDemo() {
         open={isOpen.modal}
         onOpenChange={(v) => setIsOpen((p) => ({ ...p, modal: v }))}
       >
-        <DialogContent className="sm:max-w-6xl xl:p-0 px-4 border-none bg-transparent overflow-hidden">
+        <DialogContent className="xl:max-w-7xl sm:max-w-6xl 2xl:p-0 px-4 border-none bg-transparent overflow-hidden">
           <Sidebar>
             {/* 👈 Dynamic Content Switcher*/}
             <DynamicTabContent />

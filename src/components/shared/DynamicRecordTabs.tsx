@@ -4,7 +4,7 @@
 import React, { useState } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Calendar, Search, Settings, Inbox } from "lucide-react";
+import { Calendar, Search, Inbox } from "lucide-react";
 
 // Shadcn Table Components
 import {
@@ -28,24 +28,33 @@ export interface ColumnItem {
   label: string;
   align?: "left" | "center" | "right";
 }
-
+interface SelectOption {
+  value: string;
+  label: string;
+}
 interface DynamicRecordContainerProps {
   tabs: TabItem[];
-  columns: ColumnItem[];
+  label?: string;
+  columns: any[];
   data?: any[];
+  selectData?: SelectOption[];
   isLoading?: boolean;
   totals?: Record<string, string | number>;
   extraHeaderButton?: React.ReactNode;
+  rightActions?: React.ReactNode;
   onSearch?: (filters: { tab: string; date: string; vendor: string }) => void;
 }
 
 export default function DynamicRecordContainer({
   tabs,
   columns,
+  label = "",
   data = [],
+  selectData = [],
   isLoading = false,
   totals,
   extraHeaderButton,
+  rightActions,
   onSearch,
 }: DynamicRecordContainerProps) {
   const [activeTab, setActiveTab] = useState<string>(tabs[0]?.id || "");
@@ -68,7 +77,12 @@ export default function DynamicRecordContainer({
               <TabsTrigger
                 key={tab.id}
                 value={tab.id}
-                className="rounded-none data-active:shadow-none! data-active:border-b-red-500 border-b-2 data-active:text-red-500 data-active:font-bold text-xs font-semibold text-slate-600 px-1 pb-2.5 transition-all cursor-pointer whitespace-nowrap"
+                disabled={tabs.length <= 1}
+                className={`rounded-none border-b-2 transition-all text-xs font-semibold px-1 pb-2.5 whitespace-nowrap ${
+                  tabs.length <= 1
+                    ? "cursor-default pointer-events-none  text-slate-800 font-bold"
+                    : "cursor-pointer text-slate-600 data-active:shadow-none! data-active:border-b-red-500 data-active:text-red-500 data-active:font-bold"
+                }`}
               >
                 {tab.label}
               </TabsTrigger>
@@ -111,20 +125,18 @@ export default function DynamicRecordContainer({
             </span>
           </div>
 
-          <AppSelect
-            clasName="flex items-center gap-5 space-y-0!"
-            label="Vendor"
-            options={[
-              { value: "all", label: "All" },
-              { value: "evolution", label: "Evolution" },
-              { value: "pragmatic", label: "Pragmatic Play" },
-            ]}
-            field={{
-              state: { value: vendor },
-              handleChange: (val: string) => setVendor(val),
-            }}
-          />
-          <div className="flex items-center gap-2 ml-auto">
+          {selectData.length > 0 && (
+            <AppSelect
+              className="flex items-center gap-2 space-y-0!"
+              label={label}
+              options={selectData}
+              field={{
+                state: { value: vendor },
+                handleChange: (val: string) => setVendor(val),
+              }}
+            />
+          )}
+          <div className="flex items-center gap-2">
             <Button
               type="button"
               onClick={handleSearchClick}
@@ -133,13 +145,7 @@ export default function DynamicRecordContainer({
               <Search className="w-3 h-3" />
               Search
             </Button>
-
-            <button
-              type="button"
-              className="p-1.5 rounded-full bg-slate-200/70 hover:bg-slate-200 text-slate-600 transition-colors cursor-pointer"
-            >
-              <Settings className="w-3.5 h-3.5" />
-            </button>
+            {rightActions}
           </div>
         </div>
 
@@ -176,7 +182,7 @@ export default function DynamicRecordContainer({
                     <TableRow>
                       <TableCell
                         colSpan={columns.length}
-                        className="h-48 text-center"
+                        className="h-80 text-center"
                       >
                         <div className="flex flex-col items-center justify-center space-y-2">
                           <div className="w-6 h-6 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
@@ -209,11 +215,8 @@ export default function DynamicRecordContainer({
                       </TableRow>
                     ))
                   ) : (
-                    <TableRow>
-                      <TableCell
-                        colSpan={columns.length}
-                        className="h-48 text-center"
-                      >
+                    <TableRow className="hover:bg-transparent border-0">
+                      <TableCell colSpan={columns.length} className="h-80">
                         <div className="flex flex-col items-center justify-center space-y-2">
                           <Inbox className="w-8 h-8 text-slate-300 stroke-[1.5]" />
                           <span className="text-slate-400 font-medium text-xs">
