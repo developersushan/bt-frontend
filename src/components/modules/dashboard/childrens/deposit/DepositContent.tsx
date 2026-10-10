@@ -97,7 +97,7 @@ export default function DepositContent() {
         >
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 h-full">
             {/*  Left Side: FIXED Navigation */}
-            <div className="lg:col-span-4 flex flex-col h-full mt-4">
+            <div className="lg:col-span-3 flex flex-col h-full mt-4">
               <label className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 block shrink-0">
                 1. Select Payment Method
               </label>
@@ -134,7 +134,7 @@ export default function DepositContent() {
             </div>
 
             {/* Right Side: SCROLLABLE Content */}
-            <div className="lg:col-span-8 h-full overflow-y-auto p-4 pb-0 border-l border-slate-100">
+            <div className="lg:col-span-9 h-full overflow-y-auto p-4 pb-0 border-l border-slate-100">
               {depositMethods.map((method) => (
                 <TabsContent
                   key={method.id}

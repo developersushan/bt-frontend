@@ -7,6 +7,11 @@ import { ChangePasswordForm } from "../auth/ChangePasswordForm";
 import MyAccountContent from "./childrens/my-account/MyAccountMain";
 import TransactionPassword from "./childrens/my-account/TransactionPassword";
 import WithdrawalMain from "./childrens/withdrawal/WithdrawalMain";
+import AccountRecord from "./childrens/account-record/AccountRecord";
+import ProfitLoss from "./childrens/profit-and-loss/ProfitLoss";
+import RewardCenter from "./childrens/reward-center/RewardCenter";
+import BillVoucher from "./childrens/reward-center/BillVoucher";
+import InviteAndEarnContainer from "./childrens/invite-friend/InviteAndEarnContainer";
 
 export function DynamicTabContent() {
   const activeTab = useProfileStore((state) => state.activeTab);
@@ -28,6 +33,22 @@ export function DynamicTabContent() {
       return <TransactionPassword />;
     case "withdrawal":
       return <WithdrawalMain />;
+    case "account-record":
+      return <AccountRecord />;
+    case "profit-and-loss":
+      return <ProfitLoss />;
+    case "reward-center":
+      return <RewardCenter />;
+    case "internal-message":
+      return <AccountRecord />;
+    case "custom-service":
+      return <AccountRecord />;
+    case "invite-friends":
+      return <InviteAndEarnContainer />;
+    case "mission":
+      return <AccountRecord />;
+    case "bill-voucher":
+      return <BillVoucher />;
     default:
       return (
         <div className="text-slate-500 py-10 text-center">

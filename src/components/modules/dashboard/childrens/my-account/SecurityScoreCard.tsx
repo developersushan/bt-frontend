@@ -8,7 +8,7 @@ export function SecurityScoreCard() {
     (_, index) => index !== 1 && index !== 4,
   );
   return (
-    <div className="w-full max-w-sm bg-rose-500 rounded-2xl shadow-xl overflow-hidden flex flex-col justify-between text-white select-none">
+    <div className="w-full bg-rose-500 rounded-2xl shadow-xl overflow-hidden flex flex-col justify-between text-white select-none">
       {/* Upper Security Meter Section */}
       <div className="p-6 flex flex-col items-center justify-center text-center relative pt-8">
         {/* Circle Score Container */}

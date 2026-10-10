@@ -11,7 +11,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 export function UserProfileCard() {
   return (
-    <div className="w-full max-w-sm bg-white rounded-2xl shadow-lg p-5 border border-slate-100 flex flex-col justify-between select-none">
+    <div className="w-full bg-white rounded-2xl shadow-lg p-5 border border-slate-100 flex flex-col justify-between select-none">
       <div>
         {/* Profile Header with Banner Overlay */}
         <div className="relative bg-linear-to-r from-slate-200 via-slate-100 to-slate-200 rounded-xl p-4 mb-4 flex items-center justify-between overflow-hidden">

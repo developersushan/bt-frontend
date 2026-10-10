@@ -17,16 +17,16 @@ type Option = {
 };
 
 type Props = {
-  clasName?: string;
+  className?: string;
   field: any;
   label: string;
   options: Option[];
 };
 
-export default function AppSelect({ field, label, options, clasName }: Props) {
+export default function AppSelect({ field, label, options, className }: Props) {
   return (
-    <div className={cn("space-y-1", clasName)}>
-      <Label>{label}</Label>
+    <div className={cn("space-y-1", className)}>
+      <Label className="shrink-0">{label}</Label>
       <Select
         value={field.state.value || ""}
         onValueChange={(value) => field.handleChange(value)}
