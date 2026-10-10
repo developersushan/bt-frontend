@@ -1,4 +1,4 @@
-import DynamicRecordContainer from "@/components/shared/DynamicRecordTabs";
+import DynamicRecordContainer from "@/components/modules/dashboard/DynamicRecordContainer";
 import { Button } from "@/components/ui/button";
 import { Settings } from "lucide-react";
 

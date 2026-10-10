@@ -1,6 +1,6 @@
-import DynamicRecordContainer from "@/components/shared/DynamicRecordTabs";
+import DynamicRecordContainer from "@/components/modules/dashboard/DynamicRecordContainer";
 
- const PROFIT_LOSS_TABS = [
+const PROFIT_LOSS_TABS = [
   { id: "today", label: "Today" },
   { id: "yesterday", label: "Yesterday" },
   { id: "this_week", label: "This Week" },
@@ -8,7 +8,7 @@ import DynamicRecordContainer from "@/components/shared/DynamicRecordTabs";
 ];
 
 // ২. Table Columns
- const PROFIT_LOSS_COLUMNS = [
+const PROFIT_LOSS_COLUMNS = [
   { key: "time", label: "Date " },
   { key: "category", label: "Deposit" },
   { key: "withdraw", label: "Withdraw", align: "center" },

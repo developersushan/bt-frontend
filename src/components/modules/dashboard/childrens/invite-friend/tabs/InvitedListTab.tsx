@@ -1,7 +1,6 @@
 import DynamicRecordContainer from "@/components/modules/dashboard/DynamicRecordContainer";
-import { Button } from "@/components/ui/button";
 
-export default function BettingRecord() {
+export default function InvitedListTab() {
   const categoryTabs = [
     { id: "slot", label: "Slot" },
     { id: "live", label: "Live" },
@@ -32,14 +31,9 @@ export default function BettingRecord() {
   return (
     <DynamicRecordContainer
       tabs={categoryTabs}
+      tabList={false}
       columns={columns}
       selectData={VENDOR_OPTIONS}
-      label="Vendor"
-      extraHeaderButton={
-        <Button className="bg-red-400 hover:bg-red-500 text-white rounded-full text-[11px] px-3.5 py-1 h-auto cursor-pointer">
-          Exclusion turnover list
-        </Button>
-      }
     />
   );
 }

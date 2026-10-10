@@ -1,4 +1,4 @@
-import DynamicRecordContainer from "@/components/shared/DynamicRecordTabs";
+import DynamicRecordContainer from "@/components/modules/dashboard/DynamicRecordContainer";
 const PROFIT_LOSS_TABS = [{ id: "bill", label: "Voucher Record" }];
 
 // ২. Table Columns

@@ -11,6 +11,7 @@ import AccountRecord from "./childrens/account-record/AccountRecord";
 import ProfitLoss from "./childrens/profit-and-loss/ProfitLoss";
 import RewardCenter from "./childrens/reward-center/RewardCenter";
 import BillVoucher from "./childrens/reward-center/BillVoucher";
+import InviteAndEarnContainer from "./childrens/invite-friend/InviteAndEarnContainer";
 
 export function DynamicTabContent() {
   const activeTab = useProfileStore((state) => state.activeTab);
@@ -43,7 +44,7 @@ export function DynamicTabContent() {
     case "custom-service":
       return <AccountRecord />;
     case "invite-friends":
-      return <AccountRecord />;
+      return <InviteAndEarnContainer />;
     case "mission":
       return <AccountRecord />;
     case "bill-voucher":
