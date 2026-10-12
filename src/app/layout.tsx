@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import QueryProviders from "@/providers/QueryProvider";
-import { Toaster } from "@/components/ui/toast";
+import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({
   variable: "--inter",
@@ -20,7 +20,16 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="en" className={`${inter.className}`}>
       <body>
         <QueryProviders>
-            <Toaster />
+          <Toaster
+            position="top-right"
+            toastOptions={{
+              style: {
+                background: "#022421",
+                color: "#f4f4f5",
+                border: "#0c4e48",
+              },
+            }}
+          />
           <TooltipProvider>{children}</TooltipProvider>
         </QueryProviders>
       </body>

@@ -8,17 +8,17 @@ interface AppSubmitButtonProps {
   children: React.ReactNode;
   pendingLabel?: string;
   className?: string;
-  disable: boolean;
+  disabled: boolean;
 }
 
 const AppSubmitButton = ({
   isPending,
   children,
-  disable,
+  disabled,
   className,
   pendingLabel = "submitting",
 }: AppSubmitButtonProps) => {
-  const isDisabled = disable || isPending;
+  const isDisabled = disabled || isPending;
   return (
     <Button
       type="submit"

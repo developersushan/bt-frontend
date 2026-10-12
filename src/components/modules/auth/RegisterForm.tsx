@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import AppField from "@/components/shared/form/AppField";
 import AppSubmitButton from "@/components/shared/form/AppSubmitButton";
@@ -11,13 +10,16 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { registerZodSchema } from "@/zod/auth.validation";
+import { IRegisterPayload, registerZodSchema } from "@/zod/auth.validation";
 import { useForm } from "@tanstack/react-form";
 import { EyeOff, Eye, Phone, LockKeyhole } from "lucide-react";
 import Link from "next/link";
 
 import { useState } from "react";
 import GooleFacebookButton from "./GooleFacebookButton";
+import { useMutation } from "@tanstack/react-query";
+import { registerAction } from "@/services/auth.service";
+import { toast } from "sonner";
 interface RegisterFormProps {
   onSwitchToLogin?: () => void;
 }
@@ -25,22 +27,40 @@ const RegisterForm = ({ onSwitchToLogin }: RegisterFormProps) => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [confirmShowPassword, setConfirmShowPassword] =
     useState<boolean>(false);
-
+  const { mutateAsync, isPending } = useMutation({
+    mutationFn: (payload: IRegisterPayload) => registerAction(payload),
+  });
   const form = useForm({
     defaultValues: {
-      phoneNumber: "",
+      phone: "",
       password: "",
-      confirmPassword: "",
+      password_confirmation: "",
+      rememberMe: true,
     },
     validators: {
       onChange: registerZodSchema,
     },
     onSubmit: async ({ value }) => {
-      console.log(value);
+      const toastId = toast.loading("Registering...");
+      try {
+        const result = await mutateAsync(value);
+        if (!result.success) {
+          toast.error(result.message, { id: toastId });
+          return;
+        }
+        toast.success(result.message || "Register successfully", {
+          id: toastId,
+        });
+      } catch (error: unknown) {
+        toast.error(
+          error instanceof Error ? error.message : "Registration failed",
+          { id: toastId },
+        );
+      }
     },
   });
   return (
-    <div className="sm:px-0 px-4"> 
+    <div className="sm:px-0 px-4">
       <Card className="bg-primary-cyan border border-[#0e5c55] text-white shadow-2xl rounded-2xl overflow-hidden max-w-sm w-full">
         <CardHeader className="text-left pb-2">
           {/* Title in Bright Yellow */}
@@ -72,13 +92,13 @@ const RegisterForm = ({ onSwitchToLogin }: RegisterFormProps) => {
             className="space-y-4"
           >
             {/* Email Field */}
-            <form.Field name="phoneNumber">
+            <form.Field name="phone">
               {(field) => (
                 <AppField
                   label="Phone Number"
                   inputClassName="bg-[#022421] border-[#0c4e48] text-white placeholder:text-teal-200/40 focus:border-teal-foreground "
                   field={field}
-                  type="number"
+                  type="tel"
                   placeholder="Phone number"
                   prepend={
                     <button>
@@ -121,7 +141,7 @@ const RegisterForm = ({ onSwitchToLogin }: RegisterFormProps) => {
                 />
               )}
             </form.Field>
-            <form.Field name="confirmPassword">
+            <form.Field name="password_confirmation">
               {(field) => (
                 <AppField
                   label="Confirm Password"
@@ -157,14 +177,25 @@ const RegisterForm = ({ onSwitchToLogin }: RegisterFormProps) => {
 
             {/* Forgot Password Link */}
             <div className="flex items-center justify-between mt-2 text-xs">
-              <label className="flex items-center gap-1.5 text-emerald-100/80 cursor-pointer">
-                <Checkbox
-                  id="terms-checkbox-2"
-                  name="terms-checkbox-2"
-                  defaultChecked
-                />
-                Remember
-              </label>
+              <form.Field name="rememberMe">
+                {(field) => (
+                  <div className="flex items-center space-x-2 my-4">
+                    <Checkbox
+                      id="remember-me"
+                      checked={field.state.value}
+                      onCheckedChange={(checked) =>
+                        field.handleChange(checked === true)
+                      }
+                    />
+                    <label
+                      htmlFor="remember-me"
+                      className="text-sm font-medium cursor-pointer"
+                    >
+                      Remember me
+                    </label>
+                  </div>
+                )}
+              </form.Field>
               <Link
                 href="/forgot-password"
                 className="text-[#ffcc00] hover:underline underline-offset-4 font-medium"
@@ -179,12 +210,12 @@ const RegisterForm = ({ onSwitchToLogin }: RegisterFormProps) => {
             >
               {([canSubmit, isSubmitting]) => (
                 <AppSubmitButton
-                  isPending={isSubmitting}
-                  pendingLabel="Logging In..."
-                  disable={!canSubmit}
+                  isPending={isSubmitting || isPending}
+                  pendingLabel="Registering..."
+                  disabled={!canSubmit}
                   className="w-full py-2.5 font-bold text-black bg-[#FFD600] hover:bg-[#FFD600]/90 rounded-xl shadow-lg shadow-amber-500/20 active:scale-98 transition-all"
                 >
-                  Login
+                  Register
                 </AppSubmitButton>
               )}
             </form.Subscribe>

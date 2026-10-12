@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -14,8 +15,22 @@ import AuthButtons from "./AuthButtons";
 import { useRouter } from "next/navigation";
 import { NavigationMenuDemo } from "../../modules/dashboard/ProfileMain";
 import { CategoryItem, fakeCategories } from "@/fake-data/fakeCategories";
+import { UserRole } from "@/lib/enum";
 
-export default function Navbar() {
+export interface IUser {
+  user: {
+    id: number;
+    name: string | null;
+    phone: string;
+    phone_verified_at: string | null;
+    created_at: string;
+    roles: UserRole;
+    permissions: string[];
+  };
+}
+export default function Navbar({ userData }: any) {
+  
+  console.log(userData);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isXlDevice, setIsXlDevice] = useState(false);
 
@@ -32,7 +47,6 @@ export default function Navbar() {
     return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
 
-  const isLogin = true; 
 
   return (
     <div className="relative">
@@ -64,9 +78,9 @@ export default function Navbar() {
           </div>
 
           {/* Right Side: Auth Buttons */}
-          {isLogin ? (
+          {userData?.user ? (
             <div className="flex items-center gap-2 sm:gap-4">
-              <NavigationMenuDemo />
+              <NavigationMenuDemo userData={userData} />
             </div>
           ) : (
             <AuthButtons />
