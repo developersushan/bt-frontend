@@ -10,6 +10,8 @@ import {
   LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+import { logoutAction } from "@/services/auth.service";
 
 export interface ComponentItem {
   id: string;
@@ -29,6 +31,19 @@ interface Props {
   handleSelect: (selected: ComponentItem) => void;
 }
 const ProfileCard = ({ handleSelect }: Props) => {
+  const handleLogout = async () => {
+    const toastId = toast.loading("Logging out...");
+    try {
+      const result = await logoutAction();
+      const successMessage = result?.message || "Logged out successfully";
+      toast.success(successMessage, {
+        id: toastId,
+      });
+    } catch (error) {
+      toast.error("Logout failed. Try again!", { id: toastId });
+      console.error(error);
+    }
+  };
   return (
     <div
       className={cn(
@@ -56,6 +71,7 @@ const ProfileCard = ({ handleSelect }: Props) => {
         <li className="border-t border-teal-500/20 pt-1">
           <button
             type="button"
+            onClick={() => handleLogout()}
             className="group flex items-center gap-3 w-full p-2.5 rounded-lg hover:bg-red-500/10 text-left outline-none transition-colors"
           >
             <LogOut className="w-4 h-4 text-slate-300 group-hover:text-red-400" />
