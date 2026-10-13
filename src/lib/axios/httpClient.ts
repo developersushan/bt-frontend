@@ -14,16 +14,16 @@ if (!API_BASE_URL) {
 
 const axiosInstance = async () => {
   try {
-    const cookieStore = await cookies();
+    // const cookieStore = await cookies();
 
     const instance = axios.create({
       baseURL: API_BASE_URL,
       timeout: 30000,
       withCredentials: true,
-      headers: {
-        "Content-Type": "application/json",
-        Cookie: cookieStore.toString(),
-      },
+      // headers: {
+      //   "Content-Type": "application/json",
+      //   Cookie: cookieStore.toString(),
+      // },
     });
     return instance;
   } catch (error) {

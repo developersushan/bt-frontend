@@ -15,22 +15,19 @@ import AuthButtons from "./AuthButtons";
 import { useRouter } from "next/navigation";
 import { NavigationMenuDemo } from "../../modules/dashboard/ProfileMain";
 import { CategoryItem, fakeCategories } from "@/fake-data/fakeCategories";
-import { UserRole } from "@/lib/enum";
 
-export interface IUser {
-  user: {
-    id: number;
-    name: string | null;
-    phone: string;
-    phone_verified_at: string | null;
-    created_at: string;
-    roles: UserRole;
-    permissions: string[];
-  };
-}
+// export interface IUser {
+//   user: {
+//     id: number;
+//     name: string | null;
+//     phone: string;
+//     phone_verified_at: string | null;
+//     created_at: string;
+//     roles: UserRole;
+//     permissions: string[];
+//   };
+// }
 export default function Navbar({ userData }: any) {
-  
-  console.log(userData);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isXlDevice, setIsXlDevice] = useState(false);
 
@@ -46,7 +43,6 @@ export default function Navbar({ userData }: any) {
     window.addEventListener("resize", checkScreenSize);
     return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
-
 
   return (
     <div className="relative">

@@ -11,6 +11,7 @@ import {
 } from "@/zod/auth.validation";
 import type { UserInfoResponse } from "@/types/auth.types";
 import status from "http-status";
+import { UserRole } from "@/lib/enum";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -39,15 +40,30 @@ export const loginAction = async (payload: ILoginPayload) => {
         password,
       },
     });
-
-    if (res.token) {
-      await setCookie("token", res.token, rememberMe);
+    if (!res?.token) {
+      return {
+        success: false,
+        message: res?.message || "লগইন ব্যর্থ হয়েছে",
+      };
     }
+    await setCookie("token", res.token, rememberMe);
+    const userInfo = await getUserInfo();
+    const role = Array.isArray(userInfo?.user?.roles)
+      ? userInfo.user.roles
+      : userInfo?.user?.roles
+        ? [userInfo.user.roles]
+        : [];
 
+    const redirectTo =
+      role.includes(UserRole.ADMIN) || role.includes(UserRole.SUPER_ADMIN)
+        ? "/admin"
+        : "/";
     return {
       success: true,
       message: res.message,
+      role,
       data: res,
+      redirectTo,
     };
   } catch (error: any) {
     return {
@@ -68,7 +84,8 @@ export const registerAction = async (payload: IRegisterPayload) => {
     };
   }
 
-  const { phone, password, password_confirmation,rememberMe } = parsedPayload.data;
+  const { phone, password, password_confirmation, rememberMe } =
+    parsedPayload.data;
 
   try {
     const res = await fetcher<any>("/register", {
@@ -79,10 +96,13 @@ export const registerAction = async (payload: IRegisterPayload) => {
         password_confirmation,
       },
     });
-
-    if (res.token) {
-      await setCookie("token", res.token,rememberMe);
+    if (!res?.token) {
+      return {
+        success: false,
+        message: res?.message || "রেজিস্ট্রার ব্যর্থ হয়েছে",
+      };
     }
+    await setCookie("token", res.token, rememberMe);
 
     return {
       success: true,
