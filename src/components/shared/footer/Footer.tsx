@@ -94,7 +94,7 @@ export function Footer() {
             </div>
 
             {/* Action Bar (PARTNER, Live Chat, Social Icons) */}
-            <div className="flex flex-wrap items-center gap-3 pt-1">
+            <div className="flex flex-wrap items-center sm:gap-3 gap-5 pt-1">
               {/* Partner Button */}
               <div className="flex flex-wrap items-center gap-3 pt-1">
                 {/* Partner Button */}

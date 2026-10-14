@@ -17,7 +17,7 @@ const CommonHomePage = async () => {
   });
 
   return (
-    <div className="container mt-22">
+    <div className="container mt-8">
       <TopBannerHeader />
       <BannerCarousel />
       <BottomBannerHeader />

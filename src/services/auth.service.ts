@@ -48,6 +48,9 @@ export const loginAction = async (payload: ILoginPayload) => {
     }
     await setCookie("token", res.token, rememberMe);
     const userInfo = await getUserInfo();
+    if (!userInfo) {
+      await deleteCookie("token");
+    }
     const role = Array.isArray(userInfo?.user?.roles)
       ? userInfo.user.roles
       : userInfo?.user?.roles
@@ -127,13 +130,11 @@ export async function getUserInfo() {
       cache: "no-store",
     });
     if (!res) {
-      await deleteCookie("token");
       return null;
     }
     return res;
   } catch (error) {
     console.error("Error fetching user info:", error);
-    await deleteCookie("token");
     return null;
   }
 }

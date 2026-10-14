@@ -83,7 +83,7 @@ export function GameCardBadge({
   variant = "default",
   className,
   ...props
-}: GameCardBadgeProps) {
+}: any) {
   const variantStyles = {
     hot: "bg-amber-500/90 text-black shadow-[0_0_8px_rgba(245,158,11,0.6)]",
     new: "bg-teal-foreground text-[#022421] shadow-[0_0_8px_rgba(0,255,196,0.6)]",

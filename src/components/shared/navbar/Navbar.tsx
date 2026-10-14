@@ -125,7 +125,7 @@ const DropdownMenu = ({
   const router = useRouter();
   return (
     <ScrollArea className="h-full w-full ">
-      <div className="p-3 grid grid-cols-2 gap-2">
+      <div className="p-4 grid grid-cols-2 gap-2">
         {categories.map((item: CategoryItem, index) => {
           const isXl = window.innerWidth >= 1280;
           const className =

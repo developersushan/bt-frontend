@@ -23,6 +23,12 @@ export async function proxy(request: NextRequest) {
 
       try {
         const userData = await getUserInfo();
+        if (!userData) {
+          const response = NextResponse.redirect(new URL("/", request.url));
+          response.cookies.delete("token");
+          return response;
+        }
+
         const userRole = userData?.user?.roles;
         const roles = Array.isArray(userRole)
           ? userRole
@@ -41,7 +47,9 @@ export async function proxy(request: NextRequest) {
       } catch {
         const url = new URL("/", request.url);
         url.searchParams.set("auth", "login");
-        return NextResponse.redirect(url);
+        const response = NextResponse.redirect(url);
+        response.cookies.delete("token");
+        return response;
       }
   }
 
