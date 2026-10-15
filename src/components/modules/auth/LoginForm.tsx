@@ -41,16 +41,19 @@ const LoginForm = ({ onSwitchToRegister }: LoginFormProps) => {
     },
     onSubmit: async ({ value }) => {
       const toastId = toast.loading("Logging in...");
-      const result = await mutateAsync(value);
-      if (!result.success) {
-        toast.error(result.message, { id: toastId });
-        return;
-      }
-      toast.success(result.message || "Logged in successfully", {
-        id: toastId,
-      });
-
       try {
+        const result = await mutateAsync(value);
+        if (!result.success) {
+          toast.error(result.message, { id: toastId });
+          return;
+        }
+        toast.success(result.message || "Logged in successfully", {
+          id: toastId,
+        });
+
+        if (result.redirectTo) {
+          router.push(result.redirectTo);
+        }
       } catch (error: unknown) {
         toast.error(
           error instanceof Error ? error.message : "Logged in failed",

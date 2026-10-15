@@ -49,6 +49,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { User } from "@/types/auth.types";
 
 // demo user data
 const initialUsers = [
@@ -134,7 +135,8 @@ const initialUsers = [
   },
 ];
 
-const UserManagement = () => {
+const UserManagement = ({ allUsers }: { allUsers: { data: User[] } }) => {
+  console.log(allUsers?.data?.map((user) => console.log(user)));
   const [users, setUsers] = useState(initialUsers);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
@@ -173,7 +175,7 @@ const UserManagement = () => {
   };
 
   // status based Badge color
-  const getStatusBadge = (status) => {
+  const getStatusBadge = (status: string) => {
     switch (status) {
       case "Active":
         return (
@@ -284,7 +286,7 @@ const UserManagement = () => {
                     setCurrentPage(1);
                   }}
                 >
-                  <SelectTrigger className="w-full md:w-[180px] bg-[#1F2937] border-gray-700 text-white">
+                  <SelectTrigger className="w-full md:w-45 bg-[#1F2937] border-gray-700 text-white">
                     <SelectValue placeholder="Filter by Status" />
                   </SelectTrigger>
                   <SelectContent className="bg-[#1F2937] border-gray-700 text-white">

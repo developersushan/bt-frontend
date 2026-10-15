@@ -1,5 +1,6 @@
 "use client";
 
+import { handleLogout } from "@/helpers/handleLogout";
 import Link from "next/link";
 import { useState } from "react";
 import {
@@ -14,7 +15,6 @@ import {
 
 const AdminSidebar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
   // sidebar menu items
   const menuItems = [
     {
@@ -88,7 +88,10 @@ const AdminSidebar = () => {
         </nav>
 
         <div className="absolute bottom-0 w-full p-4 border-t border-gray-800">
-          <button className="flex items-center gap-3 px-4 py-3 w-full rounded-lg text-red-400 hover:bg-red-400/10 transition-colors">
+          <button
+            onClick={() => handleLogout()}
+            className="flex items-center gap-3 px-4 py-3 w-full rounded-lg text-red-400 hover:bg-red-400/10 transition-colors"
+          >
             <HiOutlineLogout className="text-xl" />
             <span className="font-medium">Logout</span>
           </button>

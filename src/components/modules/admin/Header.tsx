@@ -5,6 +5,8 @@ import {
   HiOutlineSearch,
   HiOutlineBell,
 } from "react-icons/hi";
+import { ProfileDropdown } from "./Profile";
+
 export default function Header() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   return (
@@ -39,14 +41,7 @@ export default function Header() {
             <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
           </button>
           {/* Admin Profile */}
-          <div className="flex items-center gap-2 border-l border-gray-700 pl-4">
-            <div className="w-8 h-8 rounded-full bg-yellow-500 flex items-center justify-center text-black font-bold">
-              A
-            </div>
-            <span className="hidden md:block text-sm font-medium text-white">
-              Admin
-            </span>
-          </div>
+          <ProfileDropdown />
         </div>
       </header>
     </div>

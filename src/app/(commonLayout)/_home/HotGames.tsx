@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { SectionHeader } from "@/components/shared/SectionHeader";
@@ -6,7 +7,7 @@ export interface HotGamesProps {
   data: GameCategoryData;
   rows?: 1 | 2;
 }
-const HotGames = ({ data, rows }: HotGamesProps) => {
+const HotGames = ({ data, rows }: any) => {
   return (
     <section className="w-full my-6">
       <SectionHeader

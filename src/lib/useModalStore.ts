@@ -1,28 +1,16 @@
 import { create } from "zustand";
 
-type ModalType =
-  | "my-account"
-  | "deposit"
-  | "withdrawal"
-  | "custom-service"
-  | "betting-record"
-  | "account-record"
-  | "internal-message"
-  | null;
+type ModalType = "login" | "register" |  null;
 
-interface ModalStore {
+interface ModalState {
   activeModal: ModalType;
-  openModal: (type: ModalType) => void;
-  closeModal: () => void;
+  setActiveModal: (modal: ModalType) => void;
 }
 
-export const useModalStore = create<ModalStore>((set) => ({
+export const useModalStore = create<ModalState>((set) => ({
   activeModal: null,
-  openModal: (type) => set({ activeModal: type }),
-  closeModal: () => set({ activeModal: null }),
+  setActiveModal: (modal) => set({ activeModal: modal }),
 }));
-
-
 
 interface ProfileStore {
   activeTab: string;

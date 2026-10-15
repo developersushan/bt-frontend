@@ -20,6 +20,7 @@ import GooleFacebookButton from "./GooleFacebookButton";
 import { useMutation } from "@tanstack/react-query";
 import { registerAction } from "@/services/auth.service";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 interface RegisterFormProps {
   onSwitchToLogin?: () => void;
 }
