@@ -11,7 +11,6 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { handleLogout } from "@/helpers/handleLogout";
-import { useRouter } from "next/navigation";
 
 export interface ComponentItem {
   id: string;
@@ -31,7 +30,6 @@ interface Props {
   handleSelect: (selected: ComponentItem) => void;
 }
 const ProfileCard = ({ handleSelect }: Props) => {
-  const router = useRouter()
   return (
     <div
       className={cn(
@@ -59,7 +57,7 @@ const ProfileCard = ({ handleSelect }: Props) => {
         <li className="border-t border-teal-500/20 pt-1">
           <button
             type="button"
-            onClick={() => handleLogout(router)}
+            onClick={() => handleLogout()}
             className="group flex items-center gap-3 w-full p-2.5 rounded-lg hover:bg-red-500/10 text-left outline-none transition-colors"
           >
             <LogOut className="w-4 h-4 text-slate-300 group-hover:text-red-400" />

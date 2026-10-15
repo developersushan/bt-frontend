@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { logoutAction } from "@/services/auth.service";
 import { toast } from "sonner";
 
-export const handleLogout = async (router: any) => {
+export const handleLogout = async () => {
   const toastId = toast.loading("Logging out...");
   try {
     const result = await logoutAction();
@@ -10,7 +9,7 @@ export const handleLogout = async (router: any) => {
     toast.success(successMessage, {
       id: toastId,
     });
-    router.refresh();
+    window.location.reload();
   } catch (error) {
     toast.error("Logout failed. Try again!", { id: toastId });
     console.error(error);

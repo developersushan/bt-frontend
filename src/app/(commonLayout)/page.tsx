@@ -8,8 +8,11 @@ import {
   QueryClient,
 } from "@tanstack/react-query";
 import { getAllGames } from "@/services/games.service";
+import { getUserInfo } from "@/services/auth.service";
+import { UserProvider } from "@/providers/UserProvider";
 
 const CommonHomePage = async () => {
+  const userInfo = await getUserInfo();
   const queryClient = new QueryClient();
   await queryClient.prefetchQuery({
     queryKey: ["games"],
@@ -22,7 +25,9 @@ const CommonHomePage = async () => {
       <BannerCarousel />
       <BottomBannerHeader />
       <HydrationBoundary state={dehydrate(queryClient)}>
-        <AllCategory />
+        <UserProvider userInfo={userInfo}>
+          <AllCategory />
+        </UserProvider>
       </HydrationBoundary>
     </div>
   );

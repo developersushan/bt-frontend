@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 "use client";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import {
@@ -21,15 +21,22 @@ import {
 } from "../ui/game-card-design";
 import { IGame } from "@/types/game.types";
 import { getSingleGame } from "@/services/games.service";
+import { useUser } from "@/providers/UserProvider";
+import { useModalStore } from "@/lib/useModalStore";
 
 export function GameCard({ game }: { game: IGame }) {
+  const userInfo = useUser();
+  const { setActiveModal } = useModalStore();
   const router = useRouter();
   const [showLowBalanceModal, setShowLowBalanceModal] = useState(false);
+  const pendingPlayRef = useRef<number | null>(null);
 
   const { mutate: fetchSingleGame } = useMutation({
-    mutationFn: (id: string | number) => getSingleGame(id as number),
+    mutationFn: (id: number) => getSingleGame(id),
     onSuccess: (data: any) => {
-      router.push(data.launch_url);
+      if (data?.launch_url) {
+        router.push(data.launch_url);
+      }
     },
     onError: (error: any) => {
       const errorMessage = error?.message || "";
@@ -42,13 +49,37 @@ export function GameCard({ game }: { game: IGame }) {
     },
   });
 
+  useEffect(() => {
+    if (userInfo) {
+      setActiveModal(null);
+
+      if (pendingPlayRef.current === game.id) {
+        const gameIdToPlay = pendingPlayRef.current;
+        pendingPlayRef.current = null;
+        fetchSingleGame(gameIdToPlay);
+      }
+    } else {
+      pendingPlayRef.current = null;
+    }
+  }, [userInfo, game.id, fetchSingleGame, setActiveModal]);
+
+  const handlePlayGame = (gameId: number) => {
+    if (!userInfo) {
+      pendingPlayRef.current = gameId;
+      setActiveModal("login");
+      return;
+    }
+
+    fetchSingleGame(gameId);
+  };
+
   return (
     <>
       <GameCardContainer>
         <GameCardMedia src={game.thumbnail} alt={game.name}>
           <GameCardPlayOverlay
             isFreeTrial={game.is_featured}
-            onPlay={() => fetchSingleGame(game.id)}
+            onPlay={() => handlePlayGame(game.id)}
             onTrial={() => fetchSingleGame(game.id)}
           />
         </GameCardMedia>
@@ -62,7 +93,7 @@ export function GameCard({ game }: { game: IGame }) {
               পর্যাপ্ত ব্যালেন্স নেই!
             </DialogTitle>
             <DialogDescription className="text-emerald-200/80 text-sm mt-1">
-              গেমটি চালু করতে আপনার ওয়ালেটে পর্যাপ্ত ব্যালেন্স নেই। দয়া করে
+              গেমটি চালু করতে আপনার ওয়ালেটে পর্যাপ্ত ব্যালেন্স নেই। দয়া করে
               অ্যাকাউন্টে ব্যালেন্স যোগ করুন।
             </DialogDescription>
           </DialogHeader>

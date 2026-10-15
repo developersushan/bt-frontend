@@ -15,17 +15,22 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { handleLogout } from "@/helpers/handleLogout";
-import { useRouter } from "next/navigation";
+import { useUser } from "@/providers/UserProvider";
 
 export function ProfileDropdown() {
-  const router = useRouter();
+  const userInfo = useUser();
+  const initials = userInfo?.user?.roles?.[0]
+    ?.split("-")
+    .map((w: string) => w[0]?.toUpperCase())
+    .join("");
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
         render={
           <div className="flex items-center gap-2 border-l border-gray-700 pl-4">
             <div className="w-8 h-8 rounded-full bg-yellow-500 flex items-center justify-center text-black font-bold">
-              A
+              {initials}
             </div>
             <span className="hidden md:block text-sm font-medium text-white">
               Admin
@@ -79,7 +84,7 @@ export function ProfileDropdown() {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => handleLogout(router)}>
+          <DropdownMenuItem onClick={() => handleLogout()}>
             Log out
             <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
           </DropdownMenuItem>

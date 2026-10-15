@@ -1,10 +1,11 @@
-import UserManagement from "@/components/admin/UserManagement";
-import React from "react";
+import UserManagement from "@/components/modules/admin/UserManagement";
+import { getAllUser } from "@/services/userManagement.service";
 
-export default function page() {
+export default async function page() {
+  const allUsers = await getAllUser();
   return (
     <div>
-      <UserManagement />
+      <UserManagement allUsers={allUsers} />
     </div>
   );
 }

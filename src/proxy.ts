@@ -16,41 +16,42 @@ export async function proxy(request: NextRequest) {
 
   if (pathname.startsWith("/admin")) {
     if (!token) {
-      const url = new URL("/", request.url);
-      url.searchParams.set("auth", "login");
-      return NextResponse.redirect(url);
+      // const url = new URL("/", request.url);
+      // url.searchParams.set("auth", "login");
+      // return NextResponse.redirect(url);
+      return NextResponse.redirect(new URL("/", request.url));
     }
 
-      try {
-        const userData = await getUserInfo();
-        if (!userData) {
-          const response = NextResponse.redirect(new URL("/", request.url));
-          response.cookies.delete("token");
-          return response;
-        }
-
-        const userRole = userData?.user?.roles;
-        const roles = Array.isArray(userRole)
-          ? userRole
-          : userRole
-            ? [userRole]
-            : [];
-
-        if (
-          !roles.includes(UserRole.ADMIN) &&
-          !roles.includes(UserRole.SUPER_ADMIN)
-        ) {
-          return NextResponse.redirect(new URL("/", request.url));
-        }
-
-        return NextResponse.next();
-      } catch {
-        const url = new URL("/", request.url);
-        url.searchParams.set("auth", "login");
-        const response = NextResponse.redirect(url);
+    try {
+      const userData = await getUserInfo();
+      if (!userData) {
+        const response = NextResponse.redirect(new URL("/", request.url));
         response.cookies.delete("token");
         return response;
       }
+
+      const userRole = userData?.user?.roles;
+      const roles = Array.isArray(userRole)
+        ? userRole
+        : userRole
+          ? [userRole]
+          : [];
+
+      if (
+        !roles.includes(UserRole.ADMIN) &&
+        !roles.includes(UserRole.SUPER_ADMIN)
+      ) {
+        return NextResponse.redirect(new URL("/", request.url));
+      }
+
+      return NextResponse.next();
+    } catch {
+      // const url = new URL("/", request.url);
+      // url.searchParams.set("auth", "login");
+      // const response = NextResponse.redirect(url);
+      // response.cookies.delete("token");
+      // return response;
+    }
   }
 
   return NextResponse.next();

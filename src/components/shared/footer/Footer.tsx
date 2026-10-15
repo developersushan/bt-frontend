@@ -47,7 +47,7 @@ export function Footer() {
   return (
     <footer className="w-full bg-[#003A3A] text-slate-300 pt-10 pb-8 mt-12">
       <div className="container px-4 sm:px-6">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+        <div className="grid grid-cols-1 md:grid-cols-12 md:gap-8 gap-4 items-start">
           {/* Left Column 1: Help Center */}
           <div className="md:col-span-3">
             <h3 className="text-[#ffb703] font-bold text-lg mb-4">

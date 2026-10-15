@@ -25,7 +25,6 @@ interface RegisterFormProps {
   onSwitchToLogin?: () => void;
 }
 const RegisterForm = ({ onSwitchToLogin }: RegisterFormProps) => {
-  const router = useRouter();
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [confirmShowPassword, setConfirmShowPassword] =
     useState<boolean>(false);
@@ -53,10 +52,6 @@ const RegisterForm = ({ onSwitchToLogin }: RegisterFormProps) => {
         toast.success(result.message || "Register successfully", {
           id: toastId,
         });
-
-        if (result.redirectTo) {
-          router.push(result.redirectTo);
-        }
       } catch (error: unknown) {
         toast.error(
           error instanceof Error ? error.message : "Registration failed",
