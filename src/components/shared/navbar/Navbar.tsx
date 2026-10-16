@@ -32,7 +32,7 @@ export default function Navbar() {
     return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
 
-  const isLogin = true; 
+  const isLogin = true;
 
   return (
     <div className="relative">
