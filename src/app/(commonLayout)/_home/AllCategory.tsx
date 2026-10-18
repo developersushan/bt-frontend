@@ -6,7 +6,7 @@ import { getAllGames } from "@/services/games.service";
 import { IGame } from "@/types/game.types";
 
 const AllCategory = () => {
-  const { isLoading, data: gamesData } = useQuery({
+  const { isLoading, data: response } = useQuery({
     queryKey: ["games"],
     queryFn: () => getAllGames(),
   });
@@ -15,34 +15,28 @@ const AllCategory = () => {
     return <LoadingState message="Games loading..." />;
   }
 
-  const games = gamesData ?? [];
+  const gamesByGroup = response ?? {};
 
-  // Get unique categories dynamically
-  const categories = [
-    ...new Set(games.map((game: IGame) => game.category.toLowerCase())),
-  ];
-
-  // Format category for display
-  const formatCategory = (category: string) =>
-    category
-      .split("-")
+  const formatCategoryTitle = (key: string) =>
+    key
+      .replace(/_/g, " ")
+      .split(" ")
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
 
   return (
     <div className="w-full space-y-6">
-      {categories.map((category) => {
-        const categoryGames = games.filter(
-          (game: IGame) => game.category.toLowerCase() === category,
-        );
-
+      {Object.entries(gamesByGroup).map(([categoryKey, games], index) => {
+        const categoryGames = (games as IGame[]) ?? [];
+        if (categoryGames.length === 0) return null;
+        const calculatedRows = index % 2 === 0 ? 1 : 2;
         return (
           <SectionHeader
-            key={category}
-            title={formatCategory(category)}
-            moreHref={`/${category}`}
+            key={categoryKey}
+            title={formatCategoryTitle(categoryKey)}
+            moreHref={`/${categoryKey}`}
             games={categoryGames}
-            rows={1}
+            rows={calculatedRows}
           />
         );
       })}
