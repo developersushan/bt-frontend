@@ -4,7 +4,7 @@ import { fetcher } from "@/lib/fetcher";
 import { IGame } from "@/types/game.types";
 
 export const getAllGames = async (): Promise<IGame[]> => {
-  const res: any = await fetcher("/games");
+  const res: any = await fetcher("/games/home");
 
   return res?.data || res || [];
 };
