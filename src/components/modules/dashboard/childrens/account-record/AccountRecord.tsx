@@ -1,6 +1,5 @@
 import DynamicRecordContainer from "@/components/modules/dashboard/DynamicRecordContainer";
-import { Button } from "@/components/ui/button";
-import { Settings } from "lucide-react";
+import MobileHeader from "../MobileHeader";
 
 export default function AccountRecord() {
   const ACCOUNT_RECORD_TABS = [
@@ -30,24 +29,14 @@ export default function AccountRecord() {
   ];
 
   return (
-    <DynamicRecordContainer
-      tabs={ACCOUNT_RECORD_TABS}
-      columns={ACCOUNT_RECORD_COLUMNS}
-      selectData={ACCOUNT_TYPE_OPTIONS}
-      label="Transaction type"
-      rightActions={
-        <button
-          type="button"
-          className="p-1.5 rounded-full bg-slate-200/70 hover:bg-slate-200 text-slate-600 transition-colors cursor-pointer"
-        >
-          <Settings className="w-3.5 h-3.5" />
-        </button>
-      }
-      extraHeaderButton={
-        <Button className="bg-red-400 hover:bg-red-500 text-white rounded-full text-[11px] px-3.5 py-1 h-auto cursor-pointer">
-          Exclusion turnover list
-        </Button>
-      }
-    />
+    <div>
+      <MobileHeader title="Transation History" />
+      <DynamicRecordContainer
+        tabs={ACCOUNT_RECORD_TABS}
+        columns={ACCOUNT_RECORD_COLUMNS}
+        selectData={ACCOUNT_TYPE_OPTIONS}
+        label="Transaction type"
+      />
+    </div>
   );
 }
