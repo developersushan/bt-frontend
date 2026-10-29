@@ -87,7 +87,7 @@ export function GameCard({ game }: { game: IGame }) {
       </GameCardContainer>
 
       <Dialog open={showLowBalanceModal} onOpenChange={setShowLowBalanceModal}>
-        <DialogContent className="sm:max-w-md bg-[#062422] text-white border-emerald-900/60 overflow-hidden">
+        <DialogContent className="sm:max-w-md bg-[#062422] text-white border-emerald-900/60 overflow-hidden p-4">
           <DialogHeader className="pt-2">
             <DialogTitle className="text-xl font-bold text-yellow-400">
               পর্যাপ্ত ব্যালেন্স নেই!
