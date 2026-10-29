@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -11,7 +10,10 @@ import {
   CheckCircle2,
   Wallet,
   AlertCircle,
+  BanknoteArrowDown,
+  BanknoteArrowUp,
 } from "lucide-react";
+import MobileHeader from "../MobileHeader";
 
 const depositMethods = [
   {
@@ -66,6 +68,11 @@ export default function DepositContent() {
 
   return (
     <div>
+      <MobileHeader
+        title="Deposit"
+        isContent={true}
+        rightContent={<BanknoteArrowUp />}
+      />
       {/* 🔹 Main Card Container */}
       <div className="w-full p-4 sm:p-6">
         {/* 🔹 Fixed Header */}
@@ -91,10 +98,7 @@ export default function DepositContent() {
         </div>
 
         {/* 🔹 Tabs Layout Area */}
-        <Tabs
-          defaultValue={depositMethods[0].id}
-          className="flex-1 min-h-0"
-        >
+        <Tabs defaultValue={depositMethods[0].id} className="flex-1 min-h-0">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 h-full">
             {/*  Left Side: FIXED Navigation */}
             <div className="lg:col-span-3 flex flex-col h-full mt-4">

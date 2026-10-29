@@ -1,0 +1,42 @@
+ export const messages = [
+    {
+      id: 1,
+      sender: "Platform",
+      title: "🎁 [WINTK-এর দৈনিক পুরস্কারের আপগ্রেড]",
+      preview: "বন্ধুরা, বিগত দিনের মতো আজকেও আপনাদের জন্য...",
+      time: "Today 13:09",
+      unread: true,
+    },
+    {
+      id: 2,
+      sender: "Platform",
+      title: "🎁 [WINTK-এর দৈনিক পুরস্কারের আপগ্রেড]",
+      preview: "বন্ধুরা, বিগত দিনের মতো আজকেও...",
+      time: "Yesterday 13:53",
+      unread: true,
+    },
+    {
+      id: 3,
+      sender: "Platform",
+      title: "🎁 [WINTK-এর দৈনিক পুরস্কারের আপগ্রেড]",
+      preview: "বিশেষ অফার এবং পুরস্কার গ্রহণ করতে...",
+      time: "10-23 12:10",
+      unread: false,
+    },
+    {
+      id: 4,
+      sender: "Platform",
+      title: "🎁 [WINTK-এর দৈনিক পুরস্কারের আপগ্রেড]",
+      preview: "আপনার প্রতিদিনের রিওয়ার্ড সংগ্রহ করুন...",
+      time: "10-22 16:53",
+      unread: false,
+    },
+    {
+      id: 5,
+      sender: "Platform",
+      title: "NAGAD ওয়ালেট থেকে টাকা উত্তোলনের জন্য DKYC যাচাই...",
+      preview: "সম্মানিত গ্রাহক, আপনার একাউন্টে লেনদেনের...",
+      time: "10-20 23:14",
+      unread: false,
+    },
+  ];

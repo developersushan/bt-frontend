@@ -8,6 +8,7 @@ import {
   Headphones,
   LogOut,
   LucideIcon,
+  TrendingUp,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { handleLogout } from "@/helpers/handleLogout";
@@ -21,6 +22,7 @@ const components: ComponentItem[] = [
   { id: "my-account", title: "My Account", icon: User },
   { id: "betting-record", title: "Betting Record", icon: History },
   { id: "account-record", title: "Account Record", icon: FileText },
+  { id: "profit-and-loss", title: "Profit And Loss", icon: TrendingUp },
   { id: "internal-message", title: "Internal Message", icon: Mail },
   { id: "deposit", title: "Deposit", icon: Wallet },
   { id: "withdrawal", title: "Withdrawal", icon: ArrowUpRight },

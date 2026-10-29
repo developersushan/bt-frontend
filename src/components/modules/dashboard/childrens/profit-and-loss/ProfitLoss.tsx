@@ -1,4 +1,7 @@
-import DynamicRecordContainer from "@/components/modules/dashboard/DynamicRecordContainer";
+import DynamicRecordContainer, {
+  type ColumnItem,
+} from "@/components/modules/dashboard/DynamicRecordContainer";
+import MobileHeader from "../MobileHeader";
 
 const PROFIT_LOSS_TABS = [
   { id: "today", label: "Today" },
@@ -8,7 +11,7 @@ const PROFIT_LOSS_TABS = [
 ];
 
 // ২. Table Columns
-const PROFIT_LOSS_COLUMNS = [
+const PROFIT_LOSS_COLUMNS: ColumnItem[] = [
   { key: "time", label: "Date " },
   { key: "category", label: "Deposit" },
   { key: "withdraw", label: "Withdraw", align: "center" },
@@ -21,9 +24,12 @@ const PROFIT_LOSS_COLUMNS = [
 
 export default function ProfitLoss() {
   return (
-    <DynamicRecordContainer
-      tabs={PROFIT_LOSS_TABS}
-      columns={PROFIT_LOSS_COLUMNS}
-    />
+    <div>
+      <MobileHeader title="Personal Report" />
+      <DynamicRecordContainer
+        tabs={PROFIT_LOSS_TABS}
+        columns={PROFIT_LOSS_COLUMNS}
+      />
+    </div>
   );
 }

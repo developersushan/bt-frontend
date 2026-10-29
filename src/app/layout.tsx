@@ -25,6 +25,7 @@ export default function RootLayout({
       <body>
         <QueryProviders>
           <Toaster
+            duration={2000}
             position="top-right"
             toastOptions={{
               style: {
