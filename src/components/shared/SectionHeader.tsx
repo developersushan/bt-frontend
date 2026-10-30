@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-
-import  { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import Link from "next/link";
 import useEmblaCarousel from "embla-carousel-react";
 import { MainHeader, TitleHeader } from "./HeaderTitle";
 import {
@@ -12,27 +10,25 @@ import {
   CarouselViewport,
 } from "./DynamicCarousel";
 import { GameCard } from "./GameCard";
+import { IGame } from "@/types/game.types";
+import { useRouter } from "next/navigation";
 
 export interface SectionHeaderProps {
   title: string;
-  moreHref?: string;
-  games: any[];
+  moreHref: string;
+  games: IGame[];
   rows?: 1 | 2;
-  onMore?: () => void;
   showNavigation?: boolean;
 }
 
 export function SectionHeader({
   title,
-  games = [],
+  games,
   rows = 2,
   moreHref,
-  onMore,
   showNavigation = true,
 }: SectionHeaderProps) {
-  const defaultSlug = `/games/${title.toLowerCase().replace(/\s+/g, "-")}`;
-  const targetHref = moreHref || defaultSlug;
-
+  const router = useRouter();
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: false,
     align: "start",
@@ -86,23 +82,13 @@ export function SectionHeader({
         <TitleHeader>{title}</TitleHeader>
 
         <div className="flex items-center gap-2">
-          {onMore ? (
-            <button
-              onClick={onMore}
-              type="button"
-              className="px-3.5 py-1.5 bg-[#003833] hover:bg-[#004d46] text-[#ffb703] hover:text-[#ffc107] text-xs font-bold rounded-md border border-[#0e5c55] transition-colors cursor-pointer"
-            >
-              More
-            </button>
-          ) : (
-            <Link
-              href={targetHref}
-              className="px-3.5 py-1.5 bg-[#003833] hover:bg-[#004d46] text-[#ffb703] hover:text-[#ffc107] text-xs font-bold rounded-md border border-[#0e5c55] transition-colors inline-block"
-            >
-              More
-            </Link>
-          )}
-
+          <button
+            onClick={() => router.push(moreHref)}
+            type="button"
+            className="px-3.5 py-1.5 bg-[#003833] hover:bg-[#004d46] text-[#ffb703] hover:text-[#ffc107] text-xs font-bold rounded-md border border-[#0e5c55] transition-colors cursor-pointer"
+          >
+            More
+          </button>
           {showNavigation && (
             <div className="flex items-center gap-1">
               <button

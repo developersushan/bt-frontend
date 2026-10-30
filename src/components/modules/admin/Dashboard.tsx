@@ -6,6 +6,8 @@ import {
   HiOutlineChartBar,
   HiOutlineTicket,
 } from "react-icons/hi";
+import { ChartLine } from "./LineChart";
+import { ChartPie } from "./PieChart";
 export default function Dashboard() {
   // start card data
   const stats = [
@@ -43,7 +45,7 @@ export default function Dashboard() {
       {/* ================= MAIN CONTENT ================= */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* DASHBOARD BODY */}
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
+        <main className="flex-1 overflow-y-auto space-y-6">
           {/* STATS CARDS */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {stats.map((stat, index) => (
@@ -65,7 +67,10 @@ export default function Dashboard() {
               </div>
             ))}
           </div>
-
+          <div className="grid grid-cols-2 gap-4 mt-6">
+            <ChartLine />
+            <ChartPie />
+          </div>
           {/* TABLES & CHARTS SECTION */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Recent Bets Table (Takes 2 columns) */}

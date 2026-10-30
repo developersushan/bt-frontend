@@ -2,13 +2,10 @@
 import LoginForm from "@/components/modules/auth/LoginForm";
 import RegisterForm from "@/components/modules/auth/RegisterForm";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { useState } from "react";
+import { useModalStore } from "@/lib/useModalStore";
 
 function AuthButtons() {
-  const [activeModal, setActiveModal] = useState<"login" | "register" | null>(
-    null,
-  );
-
+  const { activeModal, setActiveModal } = useModalStore();
   return (
     <>
       {/* Trigger Buttons Header Section */}

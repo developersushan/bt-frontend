@@ -15,7 +15,18 @@ import { useRouter } from "next/navigation";
 import { NavigationMenuDemo } from "../../modules/dashboard/ProfileMain";
 import { CategoryItem, fakeCategories } from "@/fake-data/fakeCategories";
 
-export default function Navbar() {
+// export interface IUser {
+//   user: {
+//     id: number;
+//     name: string | null;
+//     phone: string;
+//     phone_verified_at: string | null;
+//     created_at: string;
+//     roles: UserRole;
+//     permissions: string[];
+//   };
+// }
+export default function Navbar({ userData }: any) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isXlDevice, setIsXlDevice] = useState(false);
 
@@ -64,9 +75,9 @@ export default function Navbar() {
           </div>
 
           {/* Right Side: Auth Buttons */}
-          {isLogin ? (
+          {userData?.user ? (
             <div className="flex items-center gap-2 sm:gap-4">
-              <NavigationMenuDemo />
+              <NavigationMenuDemo userData={userData} />
             </div>
           ) : (
             <AuthButtons />
@@ -115,7 +126,7 @@ const DropdownMenu = ({
   const router = useRouter();
   return (
     <ScrollArea className="h-full w-full ">
-      <div className="p-3 grid grid-cols-2 gap-2">
+      <div className="p-4 grid grid-cols-2 gap-2">
         {categories.map((item: CategoryItem, index) => {
           const isXl = window.innerWidth >= 1280;
           const className =

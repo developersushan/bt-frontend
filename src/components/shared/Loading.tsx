@@ -11,7 +11,7 @@ const LoadingState = ({ message = "Fetching data..." }: LoadingProps) => {
         {/* Outer pulse effect */}
         <div className="absolute inset-0 rounded-full bg-red-500/20 animate-ping duration-1000" />
         <Loader2
-          className="animate-spin text-red-600 relative z-10"
+          className="animate-spin text-amber-600 relative z-10"
           size={48}
         />
       </div>

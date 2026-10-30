@@ -1,12 +1,21 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import FloatingSupport from "@/components/shared/FloatingSupport";
 import { Footer } from "@/components/shared/footer/Footer";
+import BottomNavbar from "@/components/shared/navbar/MobileBottomNavbar";
 import Navbar from "@/components/shared/navbar/Navbar";
+import { getUserInfo } from "@/services/auth.service";
 
-const CommonLayout = ({ children }: { children: React.ReactNode }) => {
+const CommonLayout = async ({ children }: { children: React.ReactNode }) => {
+  const userData: any = await getUserInfo();
   return (
     <div>
-      <Navbar />
+      <div className="h-16">
+        <Navbar userData={userData} />
+      </div>
       {children}
+      <FloatingSupport />
       <Footer />
+      <BottomNavbar />
     </div>
   );
 };

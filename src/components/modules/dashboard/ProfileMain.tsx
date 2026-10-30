@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState, useRef } from "react";
@@ -13,12 +14,13 @@ import { useProfileStore } from "@/lib/useModalStore";
 import { DynamicTabContent } from "./DynamicTabContent";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import ProfileCard, { ComponentItem } from "./ProfileCard";
+import { getUserInitials } from "@/lib/getUserInitials";
 
-export function NavigationMenuDemo() {
+export function NavigationMenuDemo({ userData }: any) {
   const [isOpen, setIsOpen] = useState({ popover: false, modal: false });
   const timer = useRef<NodeJS.Timeout | null>(null);
   const { setActiveTab } = useProfileStore();
-
+  const fallbackText = getUserInitials(userData.name);
   const handleHover = (open: boolean) => {
     if (timer.current) clearTimeout(timer.current);
     timer.current = setTimeout(
@@ -55,7 +57,7 @@ export function NavigationMenuDemo() {
                 alt="@shadcn"
                 className="grayscale"
               />
-              <AvatarFallback>CN</AvatarFallback>
+              <AvatarFallback>{fallbackText}</AvatarFallback>
             </Avatar>
           </PopoverTrigger>
 
