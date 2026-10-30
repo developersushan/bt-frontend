@@ -6,6 +6,8 @@ import {
   HiOutlineChartBar,
   HiOutlineTicket,
 } from "react-icons/hi";
+import { ChartLine } from "./LineChart";
+import { ChartPie } from "./PieChart";
 export default function Dashboard() {
   // start card data
   const stats = [
@@ -65,7 +67,10 @@ export default function Dashboard() {
               </div>
             ))}
           </div>
-
+          <div className="grid grid-cols-2 gap-4 mt-6">
+            <ChartLine />
+            <ChartPie />
+          </div>
           {/* TABLES & CHARTS SECTION */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Recent Bets Table (Takes 2 columns) */}
