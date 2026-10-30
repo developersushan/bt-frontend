@@ -55,7 +55,7 @@ const FilterControl: React.FC<FilterControlProps> = ({
       </div>
 
       {/* Date Range Display */}
-      <div className="flex items-center gap-2 bg-white border border-slate-200/80 rounded-lg px-3 py-1 shadow-2xs">
+      <div className="flex items-center flex-wrap gap-2 bg-white border border-slate-200/80 rounded-lg px-3 py-1 shadow-2xs">
         <Calendar className="w-3.5 h-3.5 text-slate-400" />
         <span className="text-[11px] text-slate-600 font-medium">
           10/07 00:00:00 ~ 10/07 23:59:59

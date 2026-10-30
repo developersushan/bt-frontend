@@ -12,6 +12,8 @@ import ProfitLoss from "./childrens/profit-and-loss/ProfitLoss";
 import RewardCenter from "./childrens/reward-center/RewardCenter";
 import BillVoucher from "./childrens/reward-center/BillVoucher";
 import InviteAndEarnContainer from "./childrens/invite-friend/InviteAndEarnContainer";
+import InternalMessages from "./childrens/messages/InternalMessages";
+import MissionMilestones from "./childrens/missions/MissionMilestones";
 
 export function DynamicTabContent() {
   const activeTab = useProfileStore((state) => state.activeTab);
@@ -40,13 +42,13 @@ export function DynamicTabContent() {
     case "reward-center":
       return <RewardCenter />;
     case "internal-message":
-      return <AccountRecord />;
+      return <InternalMessages />;
     case "custom-service":
       return <AccountRecord />;
     case "invite-friends":
       return <InviteAndEarnContainer />;
     case "mission":
-      return <AccountRecord />;
+      return <MissionMilestones />;
     case "bill-voucher":
       return <BillVoucher />;
     default:
