@@ -12,6 +12,11 @@ import {
   Boxes,
 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import LoadingState from "@/components/shared/Loading";
+import { useGames } from "@/lib/useGames";
+import { useRouter } from "next/navigation";
+import { IGame } from "@/types/game.types";
+import { CATEGORY_ICONS } from "@/components/shared/navbar/Navbar";
 
 // Category Data List matching image_1749b6.png
 const categories = [
@@ -27,44 +32,46 @@ const categories = [
 ];
 
 export function BottomBannerHeader() {
-  const [activeTab, setActiveTab] = useState("");
+  const router = useRouter();
+  const { isLoading, gamesByGroup, formatCategoryTitle } = useGames();
 
+  if (isLoading) {
+    return <LoadingState message="Games loading..." />;
+  }
   return (
-    <ScrollArea>
+    <ScrollArea className="w-full">
       <div className="w-full container my-6 px-0">
-        {/* Scrollable Container for Mobile/Desktop */}
-        <div className="flex items-center gap-2">
-          {categories.map((cat) => {
-            const Icon = cat.icon;
-            const isActive = activeTab === cat.id;
+        {/* Horizontal Scrollable Container */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-2">
+          {Object.entries(gamesByGroup)
+            .filter(([, games]) => (games as unknown as IGame[]).length > 0)
+            .map(([categoryKey]) => {
+              const formattedKey = categoryKey
+                .toLowerCase()
+                .replace(/[-\s]+/g, "_");
+              const icon = CATEGORY_ICONS[formattedKey] ?? "🎮";
 
-            return (
-              <button
-                key={cat.id}
-                onClick={() => setActiveTab(cat.id)}
-                type="button"
-                className={`flex-1 min-w-20 h-16 rounded-lg border flex flex-col items-center justify-center gap-1.5 transition-all duration-200 cursor-pointer shrink-0 select-none ${
-                  isActive
-                    ? "bg-[#003833] border-teal-foreground text-teal-foreground shadow-md shadow-teal-foreground/10"
-                    : "bg-[#012b28] border-[#0e5c55] text-slate-200 hover:bg-[#003833]/70 hover:border-teal-foreground/50 hover:text-teal-foreground"
-                }`}
-              >
-                {/* Category Icon */}
-                <Icon
-                  className={`size-6 transition-colors duration-200 ${
-                    isActive
-                      ? "text-teal-foreground fill-teal-foreground/20"
-                      : "text-white group-hover:text-teal-foreground"
-                  }`}
-                />
+              return (
+                <button
+                  key={categoryKey}
+                  onClick={() => {
+                    router.push(`/${encodeURIComponent(categoryKey)}`);
+                  }}
+                  type="button"
+                  className="flex-1 min-w-20 h-16 rounded-lg border bg-[#012b28] border-[#0e5c55] text-slate-200 hover:bg-[#003833]/70 hover:border-teal-foreground/50 hover:text-teal-foreground flex flex-col items-center justify-center gap-1.5 transition-all duration-200 cursor-pointer shrink-0 select-none"
+                >
+                  {/* Category Emoji Icon */}
+                  <span className="text-xl leading-none select-none">
+                    {icon}
+                  </span>
 
-                {/* Category Title */}
-                <span className="text-[10px] sm:text-[11px] font-bold tracking-wide text-center leading-none">
-                  {cat.label}
-                </span>
-              </button>
-            );
-          })}
+                  {/* Category Title */}
+                  <span className="text-[10px] sm:text-[11px] font-bold tracking-wide text-center leading-none">
+                    {formatCategoryTitle(categoryKey)}
+                  </span>
+                </button>
+              );
+            })}
         </div>
       </div>
     </ScrollArea>

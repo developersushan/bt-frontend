@@ -1,28 +1,15 @@
 "use client";
 import { SectionHeader } from "@/components/shared/SectionHeader";
-import { useQuery } from "@tanstack/react-query";
 import LoadingState from "@/components/shared/Loading";
-import { getAllGames } from "@/services/games.service";
 import { IGame } from "@/types/game.types";
+import { useGames } from "@/lib/useGames";
 
 const AllCategory = () => {
-  const { isLoading, data: response } = useQuery({
-    queryKey: ["games"],
-    queryFn: () => getAllGames(),
-  });
+  const { isLoading, gamesByGroup, formatCategoryTitle } = useGames();
 
   if (isLoading) {
     return <LoadingState message="Games loading..." />;
   }
-
-  const gamesByGroup = response ?? {};
-
-  const formatCategoryTitle = (key: string) =>
-    key
-      .replace(/_/g, " ")
-      .split(" ")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
 
   return (
     <div className="w-full space-y-6">

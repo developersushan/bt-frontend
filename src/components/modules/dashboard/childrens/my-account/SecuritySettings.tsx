@@ -20,6 +20,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { handleLogout } from "@/helpers/handleLogout";
 
 interface SecurityItem {
   id: string;
@@ -120,9 +121,6 @@ export function SecuritySettings() {
 }
 
 export function LogoutDialog() {
-  const handleLogout = (e: React.FormEvent) => {
-    e.preventDefault();
-  };
   return (
     <Dialog>
       <DialogTrigger
@@ -172,13 +170,14 @@ export function LogoutDialog() {
                 Cancel
               </Button>
             </DialogClose>
-
-            <Button
-              type="submit"
-              className="rounded-xl bg-rose-500 hover:bg-rose-600 text-white text-xs font-semibold shadow-lg shadow-rose-500/25 cursor-pointer h-9 px-5 transition-all"
-            >
-              Logout
-            </Button>
+            <DialogClose>
+              <Button
+                type="submit"
+                className="rounded-xl bg-rose-500 hover:bg-rose-600 text-white text-xs font-semibold shadow-lg shadow-rose-500/25 cursor-pointer h-9 px-5 transition-all"
+              >
+                Logout
+              </Button>
+            </DialogClose>
           </div>
         </form>
       </DialogContent>

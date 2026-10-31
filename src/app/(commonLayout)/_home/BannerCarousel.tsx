@@ -10,7 +10,12 @@ import {
   type CarouselApi,
 } from "@/components/ui/carousel";
 
-const images = ["/images/banner/banner1.jpg", "/images/banner/banner2.webp"];
+const images = [
+  "/images/banner/banner1.webp",
+  "/images/banner/banner2.webp",
+  "/images/banner/banner3.webp",
+  "/images/banner/banner4.webp",
+];
 
 export function BannerCarousel() {
   const [api, setApi] = React.useState<CarouselApi>();

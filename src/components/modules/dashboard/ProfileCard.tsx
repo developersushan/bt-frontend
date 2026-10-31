@@ -64,7 +64,7 @@ const ProfileCard = ({ handleSelect }: Props) => {
           >
             <LogOut className="w-4 h-4 text-slate-300 group-hover:text-red-400" />
             <span className="text-sm font-medium group-hover:text-red-400">
-              Sign Out
+              Logout
             </span>
           </button>
         </li>
