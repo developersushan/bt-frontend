@@ -15,3 +15,8 @@ export const getSingleGame = async (gameId: number) => {
   });
   return res;
 };
+export const getSingleCategoryGame = async (
+  categoryName: string,
+): Promise<{ data?: IGame[] } | IGame[]> => {
+  return fetcher(`/games?category=${encodeURIComponent(categoryName)}`);
+};
