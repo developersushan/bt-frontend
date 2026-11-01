@@ -10,6 +10,7 @@ import {
 import { getAllGames } from "@/services/games.service";
 import { getUserInfo } from "@/services/auth.service";
 import { UserProvider } from "@/providers/UserProvider";
+import AnnouncementModal from "./_home/AnnouncementModal";
 
 const CommonHomePage = async () => {
   const userInfo = await getUserInfo();
@@ -21,6 +22,7 @@ const CommonHomePage = async () => {
 
   return (
     <div className="container mt-8">
+      <AnnouncementModal />
       <TopBannerHeader />
       <BannerCarousel />
       <BottomBannerHeader />

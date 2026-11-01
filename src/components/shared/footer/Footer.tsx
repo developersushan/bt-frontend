@@ -3,6 +3,10 @@
 import Link from "next/link";
 import { MessageCircleMore } from "lucide-react";
 import Image from "next/image";
+import LoadingState from "../Loading";
+import { useGames } from "@/lib/useGames";
+import { IGame } from "@/types/game.types";
+import { useRouter } from "next/navigation";
 
 // Game Provider List
 const gameProviders = [
@@ -24,18 +28,6 @@ const gameProviders = [
   "FTG",
 ];
 
-const navLinks = [
-  "Hot Games",
-  "Favorites",
-  "Slots",
-  "Live",
-  "Poker",
-  "Fish",
-  "Sports",
-  "E-Sports",
-  "Lottery",
-];
-
 const socialImages = [
   { image: "/images/social-media/facebook.png", link: "#" },
   { image: "/images/social-media/whatsapp.png", link: "#" },
@@ -44,6 +36,13 @@ const socialImages = [
 ];
 
 export function Footer() {
+  const router = useRouter();
+  const { isLoading, gamesByGroup, formatCategoryTitle } = useGames();
+
+  if (isLoading) {
+    return <LoadingState message="Games loading..." />;
+  }
+
   return (
     <footer className="w-full bg-[#003A3A] text-slate-300 pt-10 pb-8 mt-12">
       <div className="container px-4 sm:px-6">
@@ -61,17 +60,22 @@ export function Footer() {
             <h3 className="text-[#ffb703] font-bold text-lg mb-4">
               Game center
             </h3>
-            <ul className="space-y-2 text-sm text-slate-300">
-              {navLinks.map((link) => (
-                <li key={link}>
-                  <Link
-                    href="#"
-                    className="hover:text-teal-foreground transition-colors duration-200"
-                  >
-                    {link}
-                  </Link>
-                </li>
-              ))}
+            <ul className="space-y-2 text-sm text-slate-300 flex flex-col ">
+              {Object.entries(gamesByGroup)
+                .filter(([, games]) => (games as IGame[]).length > 0)
+                .map(([categoryKey]) => {
+                  return (
+                    <div
+                      className="cursor-pointer hover:text-teal-foreground transition-colors duration-200"
+                      key={categoryKey}
+                      onClick={() => {
+                        router.push(`/${encodeURIComponent(categoryKey)}`);
+                      }}
+                    >
+                      {formatCategoryTitle(categoryKey)}
+                    </div>
+                  );
+                })}
             </ul>
           </div>
 
