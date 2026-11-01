@@ -28,7 +28,6 @@ export function SectionHeader({
   moreHref,
   showNavigation = true,
 }: SectionHeaderProps) {
-  console.log(title);
   const router = useRouter();
   const [emblaRef, emblaApi] = useEmblaCarousel({
     loop: false,

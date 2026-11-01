@@ -63,19 +63,38 @@ export async function fetcher<TResponse = unknown, TBody = unknown>(
 
   try {
     if (response.status !== 204) {
-      const isJson = response.headers
-        .get("content-type")
-        ?.includes("application/json");
-      data = await (isJson ? response.json() : response.text());
+      const responseText = await response.text();
+
+      if (responseText) {
+        try {
+          data = JSON.parse(responseText);
+        } catch {
+          data = responseText;
+        }
+      }
     }
   } catch {
     throw new AppError(response.status, "Failed to parse the API response");
   }
 
   if (!response.ok) {
+    const responseData =
+      data && typeof data === "object"
+        ? (data as Record<string, unknown>)
+        : null;
+    const apiMessage =
+      typeof responseData?.message === "string" ? responseData.message : null;
+    const textMessage = typeof data === "string" ? data.trim() : "";
+    const isHtml = /^<!doctype html|^<html/i.test(textMessage);
     const message =
-      (data as Record<string, string>)?.message ||
-      `Request failed with status ${response.status}`;
+      apiMessage ||
+      (!isHtml && textMessage ? textMessage.slice(0, 200) : null) ||
+      (response.status === 401 || response.status === 403
+        ? "Unauthorized"
+        : response.status >= 500
+          ? "API server error"
+          : `Request failed with status ${response.status}`);
+
     throw new AppError(response.status, message);
   }
 

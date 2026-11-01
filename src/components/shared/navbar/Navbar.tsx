@@ -8,7 +8,15 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { Menu, X } from "lucide-react";
+import {
+  ArrowDownRight,
+  ArrowUpRight,
+  Menu,
+  PlusCircle,
+  RefreshCw,
+  Wallet,
+  X,
+} from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -17,6 +25,7 @@ import { NavigationMenuDemo } from "../../modules/dashboard/ProfileMain";
 import LoadingState from "../Loading";
 import { useGames } from "@/lib/useGames";
 import { IGame } from "@/types/game.types";
+import { NavbarActionButtons } from "./NavbarActionButtons";
 
 export const CATEGORY_ICONS: Record<string, string> = {
   hot_games: "🔥",
@@ -101,6 +110,7 @@ export default function Navbar({ userData }: any) {
           {userData?.user ? (
             <div className="flex items-center gap-2 sm:gap-4">
               <NavigationMenuDemo userData={userData} />
+              <NavbarActionButtons buttonClassName="md:block hidden" />
             </div>
           ) : (
             <AuthButtons />

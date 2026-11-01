@@ -7,12 +7,7 @@ import { useRouter } from "next/navigation";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import {
   GameCardContainer,
   GameCardFooter,
@@ -21,28 +16,75 @@ import {
 } from "../ui/game-card-design";
 import { IGame } from "@/types/game.types";
 import { getSingleGame } from "@/services/games.service";
+import { useModalStore, useProfileStore } from "@/lib/useModalStore";
+import Image from "next/image";
 import { useUser } from "@/providers/UserProvider";
-import { useModalStore } from "@/lib/useModalStore";
-
-export function GameCard({ game }: { game: IGame }) {
+import { LowBalanceDialog } from "@/components/shared/LowBalanceDialog";
+export function GameCard({
+  game,
+  onLowBalance,
+  isLoggedIn,
+}: {
+  game: IGame;
+  onLowBalance?: () => void;
+  isLoggedIn?: boolean;
+}) {
   const userInfo = useUser();
   const { setActiveModal } = useModalStore();
+  const { setActiveTab, setProfileModalOpen } = useProfileStore();
   const router = useRouter();
   const [showLowBalanceModal, setShowLowBalanceModal] = useState(false);
+  const [showGamePreview, setShowGamePreview] = useState(false);
   const pendingPlayRef = useRef<number | null>(null);
+
+  const openLowBalanceModal = () => {
+    if (onLowBalance) {
+      onLowBalance();
+      return;
+    }
+
+    setShowLowBalanceModal(true);
+  };
+
+  const getResponseText = (value: unknown) =>
+    typeof value === "string"
+      ? value
+      : JSON.stringify(value ?? {}).replace(/[{}[\]",]/g, " ");
 
   const { mutate: fetchSingleGame } = useMutation({
     mutationFn: (id: number) => getSingleGame(id),
     onSuccess: (data: any) => {
-      if (data?.launch_url) {
-        router.push(data.launch_url);
+      const launchUrl = data?.launch_url || data?.data?.launch_url;
+
+      if (launchUrl) {
+        router.push(launchUrl);
+      } else if (!launchUrl) {
+        openLowBalanceModal();
       }
     },
     onError: (error: any) => {
       const errorMessage = error?.message || "";
+      const serializedError = getResponseText(error).toLowerCase();
 
-      if (errorMessage.includes("পর্যাপ্ত ব্যালেন্স নেই")) {
-        setShowLowBalanceModal(true);
+      if (
+        errorMessage.includes("unauthorized") ||
+        errorMessage.includes("unauthenticated") ||
+        errorMessage.includes("401")
+      ) {
+        pendingPlayRef.current = game.id;
+        setActiveModal("login");
+      } else if (
+        `${errorMessage} ${getResponseText(error)}`.includes(
+          "পর্যাপ্ত ব্যালেন্স নেই",
+        ) ||
+        /insufficient balance|insufficient fund|not enough balance|low balance|wallet balance/i.test(
+          getResponseText(error),
+        ) ||
+        error?.statusCode >= 500 ||
+        serializedError.includes("statuscode") ||
+        serializedError.includes("api server error")
+      ) {
+        openLowBalanceModal();
       } else {
         alert(errorMessage || "একটি এরর ঘটেছে!");
       }
@@ -50,7 +92,10 @@ export function GameCard({ game }: { game: IGame }) {
   });
 
   useEffect(() => {
-    if (userInfo) {
+    const authenticated =
+      isLoggedIn !== undefined ? isLoggedIn : userInfo != null;
+
+    if (authenticated) {
       setActiveModal(null);
 
       if (pendingPlayRef.current === game.id) {
@@ -61,10 +106,13 @@ export function GameCard({ game }: { game: IGame }) {
     } else {
       pendingPlayRef.current = null;
     }
-  }, [userInfo, game.id, fetchSingleGame, setActiveModal]);
+  }, [userInfo, isLoggedIn, game.id, fetchSingleGame, setActiveModal]);
 
   const handlePlayGame = (gameId: number) => {
-    if (!userInfo) {
+    const authenticated =
+      isLoggedIn !== undefined ? isLoggedIn : userInfo != null;
+
+    if (!authenticated) {
       pendingPlayRef.current = gameId;
       setActiveModal("login");
       return;
@@ -73,51 +121,75 @@ export function GameCard({ game }: { game: IGame }) {
     fetchSingleGame(gameId);
   };
 
+  const handleCardClick = () => {
+    if (window.matchMedia("(max-width: 639px)").matches) {
+      setShowGamePreview(true);
+    }
+  };
+
   return (
     <>
-      <GameCardContainer>
+      <GameCardContainer onClick={handleCardClick}>
         <GameCardMedia src={game.thumbnail} alt={game.name}>
           <GameCardPlayOverlay
             isFreeTrial={game.is_featured}
             onPlay={() => handlePlayGame(game.id)}
-            onTrial={() => fetchSingleGame(game.id)}
+            onTrial={() => handlePlayGame(game.id)}
           />
         </GameCardMedia>
         <GameCardFooter title={game.name} provider={game.provider_name} />
       </GameCardContainer>
 
-      <Dialog open={showLowBalanceModal} onOpenChange={setShowLowBalanceModal}>
-        <DialogContent className="sm:max-w-md bg-[#062422] text-white border-emerald-900/60 overflow-hidden p-4">
-          <DialogHeader className="pt-2">
-            <DialogTitle className="text-xl font-bold text-yellow-400">
-              পর্যাপ্ত ব্যালেন্স নেই!
-            </DialogTitle>
-            <DialogDescription className="text-emerald-200/80 text-sm mt-1">
-              গেমটি চালু করতে আপনার ওয়ালেটে পর্যাপ্ত ব্যালেন্স নেই। দয়া করে
-              অ্যাকাউন্টে ব্যালেন্স যোগ করুন।
-            </DialogDescription>
-          </DialogHeader>
-
-          <DialogFooter className="bg-[#031412] -mx-6 -mb-6 p-4 rounded-b-lg border-t border-emerald-900/50 flex gap-2 sm:justify-end mt-4">
-            <Button
-              variant="outline"
-              onClick={() => setShowLowBalanceModal(false)}
-              className="border-emerald-800 text-emerald-200 hover:bg-emerald-900/40 hover:text-white bg-transparent"
-            >
-              বাতিল
-            </Button>
-            <Button
-              onClick={() => {
-                setShowLowBalanceModal(false);
-                router.push("/deposit");
-              }}
-              className="bg-yellow-500 hover:bg-yellow-600 text-slate-950 font-bold"
-            >
-              ডিপোজিট করুন
-            </Button>
-          </DialogFooter>
+      {/* মোবাইল প্রিভিউ মোডাল */}
+      <Dialog open={showGamePreview} onOpenChange={setShowGamePreview}>
+        <DialogContent className="w-[min(92vw,420px)] overflow-hidden border-teal-500/40 bg-[#062422] p-0 text-white sm:hidden">
+          <div className="relative aspect-4/5 w-full bg-black">
+            <Image
+              src={game.thumbnail}
+              alt={game.name}
+              width={400}
+              height={500}
+              quality={100}
+              priority
+              sizes="(max-width: 640px) 92vw, 400px"
+              className="h-full w-full object-cover"
+            />
+            <div className="absolute inset-x-0 bottom-0 flex flex-col items-center gap-3 bg-linear-to-t from-black via-black/80 to-transparent px-4 pb-5 pt-16">
+              <div className="w-full text-center">
+                <h3 className="truncate text-base font-bold text-white">
+                  {game.name}
+                </h3>
+                {game.provider_name && (
+                  <p className="text-xs uppercase text-teal-300">
+                    {game.provider_name}
+                  </p>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowGamePreview(false);
+                  handlePlayGame(game.id);
+                }}
+                className="w-full max-w-52 rounded-full bg-teal-foreground py-3 text-sm font-black uppercase tracking-wider text-[#022421] shadow-[0_0_16px_#00ffc4] cursor-pointer"
+              >
+                Play Now
+              </button>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
+
+      {!onLowBalance && (
+        <LowBalanceDialog
+          open={showLowBalanceModal}
+          onOpenChange={setShowLowBalanceModal}
+          onDeposit={() => {
+            setActiveTab("deposit");
+            setProfileModalOpen(true);
+          }}
+        />
+      )}
     </>
   );
 }

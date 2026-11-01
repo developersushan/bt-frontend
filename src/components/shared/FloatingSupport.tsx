@@ -10,7 +10,7 @@ export const FloatingSupport = () => {
   const className =
     "absolute bottom-0 w-full bg-yellow-400 text-[8px] font-bold text-black text-center py-px truncate";
   return (
-    <div className="fixed right-3 sm:top-1/2 top-4/5 sm:-translate-y-1/2 -translate-y-4/5 z-50 flex flex-col space-y-3">
+    <div className="fixed right-3 sm:top-1/2 top-[68%] sm:-translate-y-1/2 translate-y-[-68%] z-50 flex flex-col space-y-3">
       <Link
         href="#"
         target="_blank"

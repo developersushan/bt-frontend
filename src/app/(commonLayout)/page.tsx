@@ -8,12 +8,10 @@ import {
   QueryClient,
 } from "@tanstack/react-query";
 import { getAllGames } from "@/services/games.service";
-import { getUserInfo } from "@/services/auth.service";
-import { UserProvider } from "@/providers/UserProvider";
 import AnnouncementModal from "./_home/AnnouncementModal";
+import { NavbarActionButtons } from "@/components/shared/navbar/NavbarActionButtons";
 
 const CommonHomePage = async () => {
-  const userInfo = await getUserInfo();
   const queryClient = new QueryClient();
   await queryClient.prefetchQuery({
     queryKey: ["games"],
@@ -25,11 +23,12 @@ const CommonHomePage = async () => {
       <AnnouncementModal />
       <TopBannerHeader />
       <BannerCarousel />
+      <div className="md:hidden block mt-4">
+        <NavbarActionButtons className="md:block hidden" />
+      </div>
       <BottomBannerHeader />
       <HydrationBoundary state={dehydrate(queryClient)}>
-        <UserProvider userInfo={userInfo}>
-          <AllCategory />
-        </UserProvider>
+        <AllCategory />
       </HydrationBoundary>
     </div>
   );

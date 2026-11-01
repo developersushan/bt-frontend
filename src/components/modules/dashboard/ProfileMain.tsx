@@ -17,14 +17,18 @@ import ProfileCard, { ComponentItem } from "./ProfileCard";
 import { getUserInitials } from "@/lib/getUserInitials";
 
 export function NavigationMenuDemo({ userData }: any) {
-  const [isOpen, setIsOpen] = useState({ popover: false, modal: false });
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const timer = useRef<NodeJS.Timeout | null>(null);
-  const { setActiveTab } = useProfileStore();
+  const {
+    setActiveTab,
+    isProfileModalOpen,
+    setProfileModalOpen,
+  } = useProfileStore();
   const fallbackText = getUserInitials(userData.name);
   const handleHover = (open: boolean) => {
     if (timer.current) clearTimeout(timer.current);
     timer.current = setTimeout(
-      () => setIsOpen((p) => ({ ...p, popover: open })),
+      () => setIsPopoverOpen(open),
       open ? 0 : 150,
     );
   };
@@ -37,18 +41,19 @@ export function NavigationMenuDemo({ userData }: any) {
       (document.activeElement as HTMLElement)?.blur();
     }
     setActiveTab(item.id); // Zustand state sync
-    setIsOpen({ popover: false, modal: true });
+    setIsPopoverOpen(false);
+    setProfileModalOpen(true);
   };
   return (
     <>
       <div
         onMouseEnter={() => handleHover(true)}
         onMouseLeave={() => handleHover(false)}
-        className="inline-block"
+        className="inline-block mt-1"
       >
         <Popover
-          open={isOpen.popover}
-          onOpenChange={(v) => setIsOpen((p) => ({ ...p, popover: v }))}
+          open={isPopoverOpen}
+          onOpenChange={setIsPopoverOpen}
         >
           <PopoverTrigger>
             <Avatar>
@@ -72,8 +77,8 @@ export function NavigationMenuDemo({ userData }: any) {
       </div>
 
       <Dialog
-        open={isOpen.modal}
-        onOpenChange={(v) => setIsOpen((p) => ({ ...p, modal: v }))}
+        open={isProfileModalOpen}
+        onOpenChange={setProfileModalOpen}
       >
         <DialogContent className="xl:max-w-7xl sm:max-w-6xl border-none bg-transparent [&>button.absolute]:hidden [&>button.absolute]:md:block">
           <Sidebar>

@@ -22,6 +22,7 @@ export default function CategoryPage() {
   const games: IGame[] = Array.isArray(response)
     ? response
     : (response?.data ?? []);
+  console.log(games);
 
   if (games.length === 0) {
     return (

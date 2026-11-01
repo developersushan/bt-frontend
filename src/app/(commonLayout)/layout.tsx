@@ -4,6 +4,8 @@ import { Footer } from "@/components/shared/footer/Footer";
 import BottomNavbar from "@/components/shared/navbar/MobileBottomNavbar";
 import Navbar from "@/components/shared/navbar/Navbar";
 import { getUserInfo } from "@/services/auth.service";
+import { UserProvider } from "@/providers/UserProvider";
+import { FeaturedGamesModalTrigger } from "./_home/FeaturedGamesModalTrigger";
 
 const CommonLayout = async ({ children }: { children: React.ReactNode }) => {
   const userData: any = await getUserInfo();
@@ -12,9 +14,10 @@ const CommonLayout = async ({ children }: { children: React.ReactNode }) => {
       <div className="h-16">
         <Navbar userData={userData} />
       </div>
-      {children}
+      <UserProvider userInfo={userData?.user}>{children}</UserProvider>
       <FloatingSupport />
       <Footer />
+      <FeaturedGamesModalTrigger isLoggedIn={Boolean(userData?.user)} />
       <BottomNavbar />
     </div>
   );
