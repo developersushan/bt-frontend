@@ -20,7 +20,7 @@ export function GameCardContainer({
     <div
       data-slot="game-card"
       className={cn(
-        "group/game-card relative overflow-hidden rounded-xl bg-[#022421] transition-all duration-300 shadow-md hover:shadow-[0_0_15px_rgba(0,255,196,0.25)] select-none flex flex-col justify-between cursor-pointer aspect-3/4 border border-[#0e5c55]/50 hover:border-teal-foreground/80",
+        "group/game-card relative flex aspect-3/4 w-full min-w-0 cursor-pointer select-none flex-col justify-between overflow-hidden rounded-xl border border-[#0e5c55]/50 bg-[#022421] shadow-md transition-all duration-300 hover:border-teal-foreground/80 hover:shadow-[0_0_15px_rgba(0,255,196,0.25)]",
         className,
       )}
       {...props}
@@ -133,7 +133,7 @@ export function GameCardPlayOverlay({
     <div
       data-slot="game-card-play-overlay"
       className={cn(
-        "absolute inset-0 z-20 flex flex-col items-center justify-center gap-2 opacity-0 group-hover/game-card:opacity-100 transition-all duration-300 bg-black/50 backdrop-blur-[2px] p-2",
+        "pointer-events-none absolute inset-0 z-20 hidden flex-col items-center justify-center gap-2 bg-black/50 p-2 opacity-0 backdrop-blur-[2px] transition-all duration-300 sm:pointer-events-auto sm:flex sm:group-hover/game-card:opacity-100",
         className,
       )}
       {...props}
@@ -145,7 +145,7 @@ export function GameCardPlayOverlay({
           e.stopPropagation();
           onPlay?.(e);
         }}
-        className="w-28 py-1.5 rounded-full bg-teal-foreground hover:bg-[#23ffc8] text-[#022421] font-black text-xs uppercase tracking-wider shadow-[0_0_12px_#00ffc4] transform scale-90 group-hover/game-card:scale-100 transition-all duration-300 cursor-pointer text-center"
+        className="w-[calc(100%-12px)] max-w-28 transform cursor-pointer rounded-full bg-teal-foreground py-1.5 text-center text-xs font-black uppercase tracking-wider text-[#022421] shadow-[0_0_12px_#00ffc4] transition-all duration-300 hover:bg-[#23ffc8] sm:scale-90 sm:group-hover/game-card:scale-100"
       >
         {playLabel}
       </button>
@@ -158,7 +158,7 @@ export function GameCardPlayOverlay({
             e.stopPropagation();
             onTrial?.(e);
           }}
-          className="w-28 py-1 rounded-full bg-[#003833]/90 hover:bg-[#004d46] border border-teal-foreground/60 text-teal-foreground font-bold text-[10px] uppercase tracking-wider transform scale-90 group-hover/game-card:scale-100 transition-all duration-300 cursor-pointer text-center"
+          className="w-[calc(100%-12px)] max-w-28 transform cursor-pointer rounded-full border border-teal-foreground/60 bg-[#003833]/90 py-1 text-center text-[10px] font-bold uppercase tracking-wider text-teal-foreground transition-all duration-300 hover:bg-[#004d46] sm:scale-90 sm:group-hover/game-card:scale-100"
         >
           {trialLabel}
         </button>

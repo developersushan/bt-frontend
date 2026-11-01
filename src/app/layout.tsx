@@ -28,10 +28,16 @@ export default function RootLayout({
             duration={2000}
             position="top-right"
             toastOptions={{
+              classNames: {
+                success:
+                  "bg-emerald-950! text-emerald-400! border! border-emerald-500! shadow-lg!",
+                error:
+                  "bg-red-950! text-red-400! border! border-red-500! shadow-lg!",
+              },
               style: {
                 background: "#022421",
-                color: "#f4f4f5",
-                border: "#0c4e48",
+                color: "#00FFB3",
+                border: "1px solid #00FFB3",
               },
             }}
           />

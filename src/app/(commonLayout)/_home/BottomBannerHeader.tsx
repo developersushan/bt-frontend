@@ -1,35 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import {
-  Flame,
-  Heart,
-  Dices,
-  Fish,
-  Gamepad2,
-  Ticket,
-  Trophy,
-  Boxes,
-} from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import LoadingState from "@/components/shared/Loading";
 import { useGames } from "@/lib/useGames";
 import { useRouter } from "next/navigation";
 import { IGame } from "@/types/game.types";
 import { CATEGORY_ICONS } from "@/components/shared/navbar/Navbar";
-
-// Category Data List matching image_1749b6.png
-const categories = [
-  { id: "hot", label: "HOT GAMES", icon: Flame },
-  { id: "favorites", label: "FAVORITES", icon: Heart },
-  { id: "slots", label: "SLOTS", icon: Boxes },
-  { id: "live", label: "LIVE", icon: Dices },
-  { id: "poker", label: "POKER", icon: Dices },
-  { id: "fish", label: "FISH", icon: Fish },
-  { id: "sports", label: "SPORTS", icon: Trophy },
-  { id: "esports", label: "E-SPORTS", icon: Gamepad2 },
-  { id: "lottery", label: "LOTTERY", icon: Ticket },
-];
 
 export function BottomBannerHeader() {
   const router = useRouter();
