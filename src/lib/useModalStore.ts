@@ -17,6 +17,7 @@ interface ProfileStore {
   setActiveTab: (tabId: string) => void;
   isProfileModalOpen: boolean;
   setProfileModalOpen: (open: boolean) => void;
+  openProfileTab: (tabId: string) => void;
 }
 
 export const useProfileStore = create<ProfileStore>((set) => ({
@@ -24,4 +25,6 @@ export const useProfileStore = create<ProfileStore>((set) => ({
   setActiveTab: (tabId) => set({ activeTab: tabId }),
   isProfileModalOpen: false,
   setProfileModalOpen: (open) => set({ isProfileModalOpen: open }),
+  openProfileTab: (tabId) =>
+    set({ activeTab: tabId, isProfileModalOpen: true }),
 }));

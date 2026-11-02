@@ -21,7 +21,6 @@ export function NavigationMenuDemo({ userData }: any) {
   const timer = useRef<NodeJS.Timeout | null>(null);
   const {
     setActiveTab,
-    isProfileModalOpen,
     setProfileModalOpen,
   } = useProfileStore();
   const fallbackText = getUserInitials(userData.name);
@@ -76,17 +75,23 @@ export function NavigationMenuDemo({ userData }: any) {
         </Popover>
       </div>
 
-      <Dialog
-        open={isProfileModalOpen}
-        onOpenChange={setProfileModalOpen}
-      >
-        <DialogContent className="xl:max-w-7xl sm:max-w-6xl border-none bg-transparent [&>button.absolute]:hidden [&>button.absolute]:md:block">
-          <Sidebar>
-            {/* 👈 Dynamic Content Switcher*/}
-            <DynamicTabContent />
-          </Sidebar>
-        </DialogContent>
-      </Dialog>
     </>
+  );
+}
+
+export function ProfileModal() {
+  const { isProfileModalOpen, setProfileModalOpen } = useProfileStore();
+
+  return (
+    <Dialog
+      open={isProfileModalOpen}
+      onOpenChange={setProfileModalOpen}
+    >
+      <DialogContent className="xl:max-w-7xl sm:max-w-6xl border-none bg-transparent [&>button.absolute]:hidden [&>button.absolute]:md:block">
+        <Sidebar>
+          <DynamicTabContent />
+        </Sidebar>
+      </DialogContent>
+    </Dialog>
   );
 }

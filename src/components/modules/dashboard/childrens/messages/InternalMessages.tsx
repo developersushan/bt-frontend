@@ -45,7 +45,7 @@ export default function InternalMessages() {
     "cursor-pointer text-slate-600 data-active:shadow-none! data-active:border-b-red-500 data-active:text-red-500 data-active:font-bold rounded-none border-b-2 transition-all text-xs font-semibold px-1 pb-2.5 whitespace-nowrap";
 
   return (
-    <div className="max-h-screen">
+    <div className="md:max-h-135 h-screen">
       <MobileHeader title="Internal Message" isContent={true} />
       <div className="w-full bg-white border border-slate-200/80 rounded-lg shadow-2xs overflow-hidden flex flex-col">
         {/* shadcn TabsInbox / Outbox */}
@@ -102,8 +102,47 @@ export default function InternalMessages() {
 
           {/* Inbox Content */}
           <TabsContent value="inbox" className="mx-2">
-            <div className="w-full max-w-dvw overflow-x-auto min-h-87.5">
-              <Table className="w-full">
+            <div className="w-full min-h-87.5">
+              <div className="divide-y divide-slate-100 lg:hidden">
+                {messages.map((msg) => (
+                  <div
+                    key={msg.id}
+                    className={`grid grid-cols-[32px_minmax(0,1fr)_auto] gap-x-2 px-2 py-3 ${
+                      msg.unread ? "bg-slate-50/40" : "bg-white"
+                    }`}
+                  >
+                    <div className="row-span-2 pt-0.5">
+                      <Checkbox
+                        checked={selectedMessages.includes(msg.id)}
+                        onCheckedChange={() => toggleSelect(msg.id)}
+                      />
+                    </div>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        {msg.unread && (
+                          <span className="size-2 shrink-0 rounded-full bg-emerald-500" />
+                        )}
+                        <span className="truncate text-xs font-semibold text-slate-800">
+                          {msg.sender}
+                        </span>
+                      </div>
+                      <div className="mt-1 min-w-0 text-xs">
+                        <span className="block font-medium text-slate-900">
+                          {msg.title}
+                        </span>
+                        <span className="mt-0.5 block truncate text-slate-400">
+                          {msg.preview}
+                        </span>
+                      </div>
+                    </div>
+                    <span className="text-[10px] text-slate-400 whitespace-nowrap">
+                      {msg.time}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              <Table className="hidden lg:table min-w-160">
                 <TableBody>
                   {messages.map((msg) => (
                     <TableRow
