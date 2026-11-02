@@ -34,7 +34,7 @@ export const NavbarActionButtons = ({
     <div className="flex items-center gap-3 ">
       {/* ১. Wallet & Balance Box */}
       <div className={className}>
-        <div className="relative group flex items-center md:gap-2.5 gap-1 md:px-3.5 px-2.5 h-10 rounded-md bg-[#03201d] border border-teal-500/40 shadow-[0_0_15px_rgba(0,128,128,0.25)] hover:border-teal-400 transition-all">
+        <div className="relative group flex items-center md:gap-2.5 gap-1 md:px-3.5 px-2.5 h-10 rounded-full bg-[#03201d] border border-teal-500/40 shadow-[0_0_15px_rgba(0,128,128,0.25)] hover:border-teal-400 transition-all">
           <div className="md:block hidden">
             <div className="flex items-center justify-center size-6 rounded-lg bg-teal-500/15 text-teal-300 border border-teal-500/30">
               <Wallet className="size-3.5" />
@@ -96,17 +96,118 @@ function DyncmicButton({
   return (
     <button
       type="button"
-      className="group relative flex sm:w-full w-full justify-center items-center gap-1.5 px-4 md:h-10 h-9  rounded-md font-bold text-black bg-linear-to-b from-[#ffe033] via-[#FFCB00] to-[#d4aa00] border-t border-yellow-200 border-b-4  shadow-[0_4px_15px_rgba(255,203,0,0.4)] hover:shadow-[0_6px_20px_rgba(255,203,0,0.7)] hover:-translate-y-0.5 active:translate-y-0.5 active:border-b-2 transition-all duration-150 cursor-pointer overflow-hidden"
       onClick={onClick}
+      className="
+    flex h-9 w-full items-center justify-center gap-1.5
+    rounded-md
+    bg-linear-to-r from-[#7c3aed] to-[#a855f7]
+    px-4
+    text-xs font-bold uppercase tracking-wide text-white
+    shadow-md shadow-purple-500/25
+    transition-all duration-200
+    hover:brightness-110
+    active:scale-[0.98]
+    sm:text-sm md:h-10
+  "
     >
-      <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full duration-1000 bg-linear-to-r from-transparent via-white/50 to-transparent transition-transform" />
-
-      <span className="flex items-center justify-center size-5 rounded-md bg-black/10 text-black">
+      <span className="flex size-5 items-center justify-center rounded bg-white/15">
         {icon}
       </span>
-      <span className="tracking-wide text-xs sm:text-sm md:font-black font-bold uppercase drop-shadow-[0_1px_0_rgba(255,255,255,0.4)]">
-        {children}
-      </span>
+
+      <span>{children}</span>
     </button>
   );
 }
+
+{
+  /* <button
+  type="button"
+  onClick={onClick}
+  className="
+    flex h-9 w-full items-center justify-center gap-1.5
+    rounded-md
+    bg-[#2563eb]
+    px-4
+    text-xs font-bold uppercase tracking-wide text-white
+    transition-colors duration-200
+    hover:bg-[#1d4ed8]
+    active:bg-[#1e40af]
+    sm:text-sm
+    md:h-10
+  "
+>
+  <span className="flex size-5 items-center justify-center rounded bg-white/15">
+    {icon}
+  </span>
+
+  <span>{children}</span>
+</button> */
+}
+
+//  <button
+//   type="button"
+//   onClick={onClick}
+//   className="
+//     flex h-9 w-full items-center justify-center gap-1.5
+//     rounded-md border border-[#f6d365]/50
+//     bg-linear-to-r from-[#f59e0b] via-[#facc15] to-[#eab308]
+//     px-4 text-xs font-bold uppercase tracking-wide text-[#241500]
+//     shadow-md shadow-yellow-500/20
+//     transition-all duration-200
+//     hover:-translate-y-0.5 hover:brightness-110
+//     active:translate-y-0
+//     sm:text-sm md:h-10
+//   "
+// >
+//   <span className="flex size-5 items-center justify-center rounded bg-black/10">
+//     {icon}
+//   </span>
+
+//   <span>{children}</span>
+// </button>
+{
+  /* <button
+  type="button"
+  onClick={onClick}
+  className="
+    flex h-9 w-full items-center justify-center gap-1.5
+    rounded-md
+    bg-linear-to-r from-[#7c3aed] to-[#a855f7]
+    px-4
+    text-xs font-bold uppercase tracking-wide text-white
+    shadow-md shadow-purple-500/25
+    transition-all duration-200
+    hover:brightness-110
+    active:scale-[0.98]
+    sm:text-sm md:h-10
+  "
+>
+  <span className="flex size-5 items-center justify-center rounded bg-white/15">
+    {icon}
+  </span>
+
+  <span>{children}</span>
+</button> */
+}
+
+//  <button
+//   type="button"
+//   onClick={onClick}
+//   className="
+//     flex h-9 w-full items-center justify-center gap-1.5
+//     rounded-md border border-[#f6d365]/50
+//     bg-linear-to-r from-[#f59e0b] via-[#facc15] to-[#eab308]
+//     px-4 text-xs font-bold uppercase tracking-wide text-[#241500]
+//     shadow-md shadow-yellow-500/20
+//     transition-all duration-200
+//     hover:-translate-y-0.5 hover:brightness-110
+//     active:translate-y-0
+//     sm:text-sm md:h-10
+//   "
+// >
+//   <span className="flex size-5 items-center justify-center rounded bg-black/10">
+//     {icon}
+//   </span>
+
+//   <span>{children}</span>
+// </button>

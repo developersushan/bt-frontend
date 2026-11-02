@@ -58,7 +58,7 @@ export default function DynamicRecordContainer({
   };
 
   return (
-    <div className="w-full bg-white h-[calc(100dvh-53px)] border-slate-200/80 text-xs text-slate-700">
+    <div className="w-full bg-white md:max-h-135 h-[calc(100dvh-53px)] border-slate-200/80 text-xs text-slate-700">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         {tabList && (
           <div className="flex items-center justify-between border-b border-slate-200 px-4 pt-2 bg-white">

@@ -8,52 +8,22 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import {
-  ArrowDownRight,
-  ArrowUpRight,
-  Menu,
-  PlusCircle,
-  RefreshCw,
-  Wallet,
-  X,
-} from "lucide-react";
+import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import AuthButtons from "./AuthButtons";
-import { NavigationMenuDemo } from "../../modules/dashboard/ProfileMain";
+import {
+  NavigationMenuDemo,
+  ProfileModal,
+} from "../../modules/dashboard/ProfileMain";
 import LoadingState from "../Loading";
 import { useGames } from "@/lib/useGames";
 import { IGame } from "@/types/game.types";
 import { NavbarActionButtons } from "./NavbarActionButtons";
+import { CATEGORY_ICONS, navItems } from "./navData";
+import { useModalStore, useProfileStore } from "@/lib/useModalStore";
 
-export const CATEGORY_ICONS: Record<string, string> = {
-  hot_games: "🔥",
-  invite_friends: "👨‍👩‍👧‍👦",
-  favorites: "⭐",
-  promotion: "🎁",
-  slots: "🎰",
-  reward_center: "🏅",
-  live: "🎲",
-  manual_rebate: "🪙",
-  poker: "🃏",
-  vip: "👑",
-  fish: "🐟",
-  mission: "🎯",
-  sports: "⚽",
-  english: "🌐",
-  esports: "🎮",
-  app_download: "📲",
-  lottery: "🎟️",
-  customer_service: "🎧",
-
-  table: "♠️",
-  bingo: "🔢",
-  crash: "🚀",
-  arcade: "🕹️",
-  keno: "🎱",
-  instant: "⚡",
-};
 export default function Navbar({ userData }: any) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isXlDevice, setIsXlDevice] = useState(false);
@@ -79,6 +49,7 @@ export default function Navbar({ userData }: any) {
 
   return (
     <div className="relative">
+      <ProfileModal />
       <header className="fixed top-0 z-50 w-full bg-[#00352F] border-b border-white/10 shadow-lg backdrop-blur-md">
         <div className="w-full px-4 sm:px-6 h-16 flex items-center justify-between">
           {/* Left Side: Menu Icon & Logo */}
@@ -129,6 +100,7 @@ export default function Navbar({ userData }: any) {
                   categoryKey,
                   categoryTitle: formatCategoryTitle(categoryKey),
                 }))}
+              userData={userData}
             />
           </aside>
         )
@@ -149,6 +121,7 @@ export default function Navbar({ userData }: any) {
                   categoryKey,
                   categoryTitle: formatCategoryTitle(categoryKey),
                 }))}
+              userData={userData}
             />
           </SheetContent>
         </Sheet>
@@ -159,14 +132,57 @@ export default function Navbar({ userData }: any) {
 
 const DropdownMenu = ({
   categories,
+  userData,
 }: {
   categories: { categoryKey: string; categoryTitle: string }[];
+  userData: any;
 }) => {
   const router = useRouter();
+  const { openProfileTab } = useProfileStore();
+  const { setActiveModal } = useModalStore();
 
   return (
     <ScrollArea className="h-full w-full">
       <div className="grid grid-cols-2 gap-2 p-3">
+        {navItems.map(({ label, href, icon: Icon }) => (
+          <button
+            key={label}
+            type="button"
+            onClick={() => {
+              const normalizedLabel = label.toLowerCase();
+
+              const profileTabs: Record<string, string> = {
+                reward: "reward-center",
+                mission: "reward-center",
+                "invite friends": "invite-friends",
+              };
+
+              const tab = profileTabs[normalizedLabel];
+
+              if (tab) {
+                if (userData?.user) {
+                  openProfileTab(tab);
+                } else {
+                  setActiveModal("login");
+                }
+                return;
+              }
+
+              if (href) {
+                router.push(href);
+              }
+            }}
+            className="flex flex-col items-center justify-center h-22 p-2 rounded-lg bg-[#003840] hover:bg-[#004d58] border border-teal-500/30 hover:border-teal-400"
+          >
+            <Icon
+              className="w-6 h-6 mb-1.5 text-teal-300 group-hover:text-teal-200"
+              aria-hidden="true"
+            />
+            <span className="text-[10px] sm:text-xs font-bold tracking-wide text-gray-200 group-hover:text-teal-foreground transition-colors leading-tight">
+              {label.toUpperCase()}
+            </span>
+          </button>
+        ))}
         {categories.map(({ categoryKey, categoryTitle }) => (
           <button
             key={categoryKey}
@@ -174,7 +190,7 @@ const DropdownMenu = ({
             onClick={() => {
               router.push(`/${encodeURIComponent(categoryKey)}`);
             }}
-            className="flex flex-col items-center justify-center h-22 p-2 rounded-lg bg-[#003840] hover:bg-[#004d58] border border-teal-500/30 hover:border-teal-400 t"
+            className="flex flex-col items-center justify-center h-22 p-2 rounded-lg bg-[#003840] hover:bg-[#004d58] border border-teal-500/30 hover:border-teal-400 "
           >
             <span
               className="text-2xl mb-1.5 group-hover:scale-110 transition-transform"
@@ -185,7 +201,7 @@ const DropdownMenu = ({
               ] ?? "🎮"}
             </span>
             <span className=" text-[10px] sm:text-xs font-bold tracking-wide text-gray-200 group-hover:text-teal-foreground transition-colors leading-tight">
-              {categoryTitle}
+              {categoryTitle.toUpperCase()}
             </span>
           </button>
         ))}

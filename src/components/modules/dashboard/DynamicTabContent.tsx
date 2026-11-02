@@ -14,6 +14,7 @@ import BillVoucher from "./childrens/reward-center/BillVoucher";
 import InviteAndEarnContainer from "./childrens/invite-friend/InviteAndEarnContainer";
 import InternalMessages from "./childrens/messages/InternalMessages";
 import MissionMilestones from "./childrens/missions/MissionMilestones";
+import ManualRebate from "./childrens/manual-rebate/ManualRebate";
 
 export function DynamicTabContent() {
   const activeTab = useProfileStore((state) => state.activeTab);
@@ -44,13 +45,19 @@ export function DynamicTabContent() {
     case "internal-message":
       return <InternalMessages />;
     case "custom-service":
-      return <AccountRecord />;
+      return (
+        <div className="flex justify-center items-center h-full">
+          Pending...
+        </div>
+      );
     case "invite-friends":
       return <InviteAndEarnContainer />;
     case "mission":
       return <MissionMilestones />;
     case "bill-voucher":
       return <BillVoucher />;
+    case "manual-rebate":
+      return <ManualRebate />;
     default:
       return (
         <div className="text-slate-500 py-10 text-center">

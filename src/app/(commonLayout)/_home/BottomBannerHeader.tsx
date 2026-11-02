@@ -5,7 +5,7 @@ import LoadingState from "@/components/shared/Loading";
 import { useGames } from "@/lib/useGames";
 import { useRouter } from "next/navigation";
 import { IGame } from "@/types/game.types";
-import { CATEGORY_ICONS } from "@/components/shared/navbar/Navbar";
+import { CATEGORY_ICONS } from "@/components/shared/navbar/navData";
 
 export function BottomBannerHeader() {
   const router = useRouter();
@@ -43,7 +43,7 @@ export function BottomBannerHeader() {
 
                   {/* Category Title */}
                   <span className="text-[10px] sm:text-[11px] font-bold tracking-wide text-center leading-none">
-                    {formatCategoryTitle(categoryKey)}
+                    {formatCategoryTitle(categoryKey).toUpperCase()}
                   </span>
                 </button>
               );
