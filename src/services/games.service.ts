@@ -20,3 +20,4 @@ export const getSingleCategoryGame = async (
 ): Promise<{ data?: IGame[] } | IGame[]> => {
   return fetcher(`/games?category=${encodeURIComponent(categoryName)}`);
 };
+

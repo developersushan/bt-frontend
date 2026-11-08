@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import Image from "next/image";
 import Autoplay from "embla-carousel-autoplay";
 import {
   Carousel,
@@ -9,15 +8,20 @@ import {
   CarouselItem,
   type CarouselApi,
 } from "@/components/ui/carousel";
-
-const images = [
-  "/images/banner/banner1.webp",
-  "/images/banner/banner2.webp",
-  "/images/banner/banner3.webp",
-  "/images/banner/banner4.webp",
-];
+import { useQuery } from "@tanstack/react-query";
+import { getUserBanners } from "@/services/banner.service";
+import LoadingState from "@/components/shared/Loading";
+import Image from "next/image";
 
 export function BannerCarousel() {
+  const { data, isLoading } = useQuery({
+    queryKey: ["banners"],
+    queryFn: () => getUserBanners(),
+    staleTime: 60 * 1000,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+  });
+
   const [api, setApi] = React.useState<CarouselApi>();
   const [current, setCurrent] = React.useState(0);
 
@@ -43,8 +47,18 @@ export function BannerCarousel() {
     };
   }, [api]);
 
+  if (isLoading) {
+    return <LoadingState message="Banners loading..." />;
+  }
+
+  const banners = data?.data ?? [];
+
+  if (banners.length === 0) {
+    return null;
+  }
+
   return (
-    <div className="relative rounded-2xl">
+    <div className="relative sm:rounded-2xl rounded-lg">
       <Carousel
         setApi={setApi}
         opts={{
@@ -56,15 +70,15 @@ export function BannerCarousel() {
         className="w-full"
       >
         <CarouselContent>
-          {images.map((src, index) => (
-            <CarouselItem key={index}>
+          {banners.map((banner, index) => (
+            <CarouselItem key={banner.id}>
               <div className="relative w-full h-55 sm:62.5">
                 <Image
-                  src={src}
-                  alt={`Banner Slide ${index + 1}`}
+                  src={banner?.image_url || banner?.image_path || ""}
+                  alt={banner?.alt_text || `Banner ${index + 1}`}
                   fill
                   priority={index === 0}
-                  className="object-cover rounded-2xl"
+                  className="object-cover sm:rounded-2xl rounded-lg"
                 />
               </div>
             </CarouselItem>
@@ -74,9 +88,9 @@ export function BannerCarousel() {
 
       {/* Pill / Dash Indicators */}
       <div className="absolute bottom-3 left-0 right-0 z-10 flex justify-center items-center gap-1.5 pointer-events-auto">
-        {images.map((_, index) => (
+        {banners.map((banner, index) => (
           <button
-            key={index}
+            key={String(banner.id)}
             type="button"
             onClick={() => api?.scrollTo(index)}
             className={`h-1.5 transition-all duration-300 rounded-full ${
