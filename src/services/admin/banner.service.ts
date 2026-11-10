@@ -8,6 +8,19 @@ export const bannerCreate = async (payload: FormData) => {
   });
   return res;
 };
+export const bannerDelete = async (id: string) => {
+  const res = await fetcher(`/admin/banners/${id}`, {
+    method: "DELETE",
+  });
+  return res;
+};
+export const bannerUploadOne = async (payload: FormData) => {
+  const res = await fetcher(`/admin/banners/upload`, {
+    method: "POST",
+    body: payload,
+  });
+  return res;
+};
 export const getBanners = async () => {
   const res = await fetcher(`/admin/banners`);
   return res;

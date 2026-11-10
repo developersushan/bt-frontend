@@ -100,14 +100,14 @@ function DyncmicButton({
       className="
     flex h-9 w-full items-center justify-center gap-1.5
     rounded-md
-    bg-linear-to-r from-[#7c3aed] to-[#a855f7]
+    bg-[#017e77]
     px-4
     text-xs font-bold uppercase tracking-wide text-white
-    shadow-md shadow-purple-500/25
-    transition-all duration-200
-    hover:brightness-110
-    active:scale-[0.98]
-    sm:text-sm md:h-10
+    transition-colors duration-200
+    hover:bg-[#e9b50a]
+    active:bg-[#046e66]
+    sm:text-sm
+    md:h-10
   "
     >
       <span className="flex size-5 items-center justify-center rounded bg-white/15">
@@ -117,31 +117,6 @@ function DyncmicButton({
       <span>{children}</span>
     </button>
   );
-}
-
-{
-  /* <button
-  type="button"
-  onClick={onClick}
-  className="
-    flex h-9 w-full items-center justify-center gap-1.5
-    rounded-md
-    bg-[#2563eb]
-    px-4
-    text-xs font-bold uppercase tracking-wide text-white
-    transition-colors duration-200
-    hover:bg-[#1d4ed8]
-    active:bg-[#1e40af]
-    sm:text-sm
-    md:h-10
-  "
->
-  <span className="flex size-5 items-center justify-center rounded bg-white/15">
-    {icon}
-  </span>
-
-  <span>{children}</span>
-</button> */
 }
 
 //  <button

@@ -31,7 +31,9 @@ const CommonHomePage = async () => {
       <AnnouncementModal />
       <TopBannerHeader />
       <HydrationBoundary state={dehydrate(queryClient)}>
-        <BannerCarousel />
+        <div className="rounded-xl">
+          <BannerCarousel />
+        </div>
       </HydrationBoundary>
       {userInfo?.user?.id && (
         <div className="md:hidden block mt-4">

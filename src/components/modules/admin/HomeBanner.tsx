@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "@tanstack/react-form";
 import { z } from "zod";
-import { ImagePlus, Loader2, RefreshCw, Trash2 } from "lucide-react";
-
+import { ImagePlus, Loader2, RefreshCw, Trash2, RotateCw } from "lucide-react";
+import imageCompression from "browser-image-compression";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,13 +17,28 @@ import {
 } from "@/components/ui/card";
 import { Field, FieldError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-// আপনার সার্ভিস ফাইল থেকে দুটো ফাংশনই ইম্পোর্ট করুন
-import { bannerCreate, getBanners } from "@/services/admin/banner.service";
+import {
+  bannerCreate,
+  bannerDelete,
+  bannerUploadOne, // ⚡ NEW: add this to banner.service (see notes)
+  getBanners,
+} from "@/services/admin/banner.service";
 
 // ───────────── Constants ─────────────
 const MAX_IMAGES = 20;
 const MAX_SIZE_MB = 5;
 const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp"];
+
+const COMPRESS_CONCURRENCY = 3; // how many images compress at the same time
+const UPLOAD_CONCURRENCY = 4; // how many images upload at the same time
+
+const COMPRESSION_OPTIONS = {
+  maxSizeMB: 0.25,
+  maxWidthOrHeight: 1600,
+  useWebWorker: true,
+  initialQuality: 0.75,
+  fileType: "image/webp",
+};
 
 // ───────────── Validation ─────────────
 const validateFile = (file: File): string | null => {
@@ -38,12 +53,19 @@ const validateFile = (file: File): string | null => {
 
 const bannerItemSchema = z
   .object({
+    // Stable key for React. Never changes, even after upload gives a server id.
+    localKey: z.string(),
+    // Server id once saved/uploaded, temporary UUID before that.
     bannerId: z.string(),
     previewUrl: z.string().min(1, "Image আবশ্যক"),
+    // Present only while the image has NOT been uploaded yet.
     file: z
       .custom<File>((v) => typeof File !== "undefined" && v instanceof File)
       .optional(),
     alt: z.string().max(120, "Alt text সর্বোচ্চ ১২০ অক্ষর"),
+    status: z.enum(["idle", "uploading", "done", "error"]).optional(),
+    // If this item replaces an already-saved banner, the old server id
+    replacesId: z.string().optional(),
   })
   .superRefine((item, ctx) => {
     if (!item.file) return;
@@ -62,17 +84,135 @@ type BannerItem = BannerFormValues["banners"][number];
 
 const isBlobUrl = (url: string): boolean => url.startsWith("blob:");
 
+interface BannerResponse {
+  id: number | string;
+  image_path: string;
+  image_url?: string;
+  alt_text?: string;
+}
+type ApiResponse = {
+  data: BannerResponse[];
+  status?: string;
+  message?: string;
+};
+
+// ───────────── Helpers ─────────────
+
+// Run `worker` over `items`, but only `limit` at a time. Keeps result order.
+async function runWithLimit<T, R>(
+  items: T[],
+  limit: number,
+  worker: (item: T) => Promise<R>,
+): Promise<R[]> {
+  const results: R[] = new Array(items.length);
+  let next = 0;
+
+  const runners = Array.from(
+    { length: Math.min(limit, items.length) },
+    async () => {
+      while (true) {
+        const i = next++;
+        if (i >= items.length) break;
+        results[i] = await worker(items[i]);
+      }
+    },
+  );
+
+  await Promise.all(runners);
+  return results;
+}
+
+// A shared queue: at most `limit` tasks run at once, the rest wait.
+const createLimiter = (limit: number) => {
+  let active = 0;
+  const queue: Array<() => void> = [];
+
+  const release = () => {
+    active--;
+    queue.shift()?.();
+  };
+
+  return <T,>(task: () => Promise<T>): Promise<T> =>
+    new Promise<T>((resolve, reject) => {
+      const run = () => {
+        active++;
+        task().then(resolve, reject).finally(release);
+      };
+      if (active < limit) run();
+      else queue.push(run);
+    });
+};
+
+// Compress one file. Falls back to the original on failure or if not smaller.
+const compressFile = async (file: File): Promise<File> => {
+  try {
+    const out = await imageCompression(file, COMPRESSION_OPTIONS);
+    if (out.size >= file.size) return file;
+
+    const baseName = file.name.replace(/\.[^.]+$/, "");
+    const ext = out.type === "image/webp" ? "webp" : out.type.split("/")[1];
+    return new File([out], `${baseName}.${ext}`, {
+      type: out.type,
+      lastModified: Date.now(),
+    });
+  } catch (err) {
+    console.error("Compression failed for", file.name, err);
+    return file;
+  }
+};
+
+// The upload endpoint may return { id } or { data: { id } }. Handle both.
+type IdLike = string | number;
+type UploadShape = {
+  id?: IdLike;
+  banner?: { id?: IdLike };
+  data?: { id?: IdLike; banner?: { id?: IdLike } } | IdLike;
+};
+
+const normalizeUploadResponse = (res: unknown): { id: IdLike } => {
+  let r: UploadShape | null = null;
+  if (typeof res === "string") {
+    try {
+      r = JSON.parse(res) as UploadShape;
+    } catch {
+      r = null;
+    }
+  } else {
+    r = res as UploadShape | null;
+  }
+
+  const inner = r?.data && typeof r.data === "object" ? r.data : undefined;
+
+  const id =
+    r?.id ??
+    inner?.id ??
+    r?.banner?.id ??
+    inner?.banner?.id ??
+    (typeof r?.data === "string" || typeof r?.data === "number"
+      ? r.data
+      : undefined);
+
+  if (id === undefined || id === null) {
+    console.error("Unexpected upload response:", res);
+    throw new Error(
+      `Upload হয়েছে কিন্তু response এ id নেই: ${JSON.stringify(res)}`,
+    );
+  }
+  return { id };
+};
+
 export default function HomeBanner() {
   const [pickError, setPickError] = useState<string | null>(null);
   const [submitMessage, setSubmitMessage] = useState<string | null>(null);
   const [isFetching, setIsFetching] = useState(true);
+  const [isCompressing, setIsCompressing] = useState(false);
 
   const addInputRef = useRef<HTMLInputElement>(null);
   const replaceInputRef = useRef<HTMLInputElement>(null);
   const replaceIndexRef = useRef<number>(-1);
   const blobUrlsRef = useRef<Set<string>>(new Set());
+  const uploadLimiterRef = useRef(createLimiter(UPLOAD_CONCURRENCY));
 
-  // TanStack Form সেটআপ
   const form = useForm({
     defaultValues: {
       banners: [] as BannerItem[],
@@ -83,10 +223,20 @@ export default function HomeBanner() {
     onSubmit: async ({ value }) => {
       setSubmitMessage(null);
 
-      const formData = new FormData();
-      console.log("test", formData);
+      // Images are uploaded in the background already. Block save until done.
+      if (value.banners.some((b) => b.status === "uploading")) {
+        setSubmitMessage("Image upload চলছে, একটু অপেক্ষা করুন");
+        return;
+      }
+      if (value.banners.some((b) => b.file)) {
+        setSubmitMessage(
+          "কিছু image upload হয়নি। Retry চাপুন বা Remove করুন।",
+        );
+        return;
+      }
 
-      // ফ্রন্টএন্ড থেকে ডাটা ফরম্যাট করা (আপনার আগের লজিক)
+      // Only small JSON now: no files in this request.
+      const formData = new FormData();
       formData.append(
         "banners",
         JSON.stringify(
@@ -94,28 +244,15 @@ export default function HomeBanner() {
             id: b.bannerId,
             order,
             alt: b.alt,
-            hasNewFile: !!b.file,
+            hasNewFile: false,
           })),
         ),
       );
 
-      // new file formData append
-      value.banners.forEach((b) => {
-        if (b.file) formData.append(`file_${b.bannerId}`, b.file);
-      });
-
       try {
-        const res = await bannerCreate(formData);
-
-        if (!res.ok) {
-          const errorData = await res.json().catch(() => ({}));
-          throw new Error(errorData.message || "Save করা যায়নি");
-        }
-
+        await bannerCreate(formData);
         setSubmitMessage("Banner সফলভাবে save হয়েছে");
-
-        // ⚡ Save fetch data and set form again
-        await fetchDataAndSetForm();
+        void fetchDataAndSetForm(); // refresh in background
       } catch (err) {
         setSubmitMessage(
           err instanceof Error ? err.message : "কিছু একটা ভুল হয়েছে",
@@ -124,21 +261,31 @@ export default function HomeBanner() {
     },
   });
 
-  // ⚡ database set form data
+  const releaseUrl = (url: string): void => {
+    if (isBlobUrl(url)) {
+      URL.revokeObjectURL(url);
+      blobUrlsRef.current.delete(url);
+    }
+  };
+
   const fetchDataAndSetForm = async () => {
     try {
       setIsFetching(true);
-      const res = await getBanners();
+      const res = (await getBanners()) as ApiResponse | BannerResponse[];
+      const bannersArray = Array.isArray(res) ? res : res.data || [];
 
-      // API রেসপন্স অনুযায়ী ডাটা ম্যাপ করা (আপনার ব্যাকএন্ড অনুযায়ী পরিবর্তন হতে পারে)
-      // ধরুন res.data = [{ id: 1, image_path: '...', image_url: 'http://...', alt_text: '...' }]
-      const fetchedBanners = (res.data || []).map((b: any) => ({
-        bannerId: String(b.id),
-        previewUrl: b.image_url || b.image_path, // সম্পূর্ণ URL
-        alt: b.alt_text || "",
-      }));
+      const fetchedBanners: BannerItem[] = bannersArray.map(
+        (item: BannerResponse) => ({
+          localKey: String(item.id),
+          bannerId: String(item.id),
+          previewUrl: item.image_url || item.image_path,
+          alt: item.alt_text || "",
+          status: "done",
+        }),
+      );
 
-      // ফর্মে নতুন ডাটা সেট করা
+      // Free old local previews before replacing them with server data
+      form.getFieldValue("banners").forEach((b) => releaseUrl(b.previewUrl));
       form.setFieldValue("banners", fetchedBanners);
     } catch (error) {
       console.error("Failed to fetch banners:", error);
@@ -148,11 +295,9 @@ export default function HomeBanner() {
     }
   };
 
-  // পেজ প্রথমবার লোড হলে ডাটা ফেচ করা
   useEffect(() => {
     fetchDataAndSetForm();
 
-    // Unmount হলে সব object URL মুছে memory খালি করা
     const urls = blobUrlsRef.current;
     return () => {
       urls.forEach((url) => URL.revokeObjectURL(url));
@@ -161,44 +306,136 @@ export default function HomeBanner() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // ───────────── Handlers ─────────────
-  const createItem = (file: File): BannerItem => {
+  // ───────────── Item helpers ─────────────
+  const createItem = (file: File, replacesId?: string): BannerItem => {
     const previewUrl = URL.createObjectURL(file);
     blobUrlsRef.current.add(previewUrl);
-    return { bannerId: crypto.randomUUID(), previewUrl, file, alt: "" };
+    const id = crypto.randomUUID();
+    return {
+      localKey: id,
+      bannerId: id,
+      previewUrl,
+      file,
+      alt: "",
+      status: "idle",
+      replacesId,
+    };
   };
 
-  const releaseUrl = (url: string): void => {
-    if (isBlobUrl(url)) {
-      URL.revokeObjectURL(url);
-      blobUrlsRef.current.delete(url);
-    }
+  // Safe against concurrent updates (uses the functional form)
+  const patchItem = (localKey: string, patch: Partial<BannerItem>): void => {
+    form.setFieldValue("banners", (prev) =>
+      prev.map((item) =>
+        item.localKey === localKey ? { ...item, ...patch } : item,
+      ),
+    );
   };
 
-  const handleAdd = (e: React.ChangeEvent<HTMLInputElement>): void => {
+  // Upload one item in the background (max UPLOAD_CONCURRENCY at once)
+  const uploadItem = (localKey: string): Promise<void> => {
+    const item = form
+      .getFieldValue("banners")
+      .find((b) => b.localKey === localKey);
+    if (!item?.file) return Promise.resolve();
+
+    const file = item.file;
+    const replacesId = item.replacesId;
+    patchItem(localKey, { status: "uploading" });
+
+    return uploadLimiterRef.current(async () => {
+      try {
+        // Server Actions must receive FormData, not a bare File
+        const fd = new FormData();
+        fd.append("file", file);
+        const result = (await bannerUploadOne(fd)) as unknown;
+
+        // Works with both service versions:
+        //  - wrapped:  { ok: true, data } / { ok: false, message }
+        //  - plain:    the raw API response, e.g. { id, image_url }
+        const wrapped = result as {
+          ok?: boolean;
+          data?: unknown;
+          message?: string;
+        } | null;
+
+        let payload: unknown = result;
+        if (wrapped && typeof wrapped.ok === "boolean") {
+          if (!wrapped.ok) {
+            throw new Error(wrapped.message || "Upload failed");
+          }
+          payload = wrapped.data;
+        }
+
+        const saved = normalizeUploadResponse(payload);
+
+        // The image is now a normal saved banner: use the server id,
+        // drop the file so it is never sent again.
+        patchItem(localKey, {
+          bannerId: String(saved.id),
+          file: undefined,
+          status: "done",
+          replacesId: undefined,
+        });
+
+        // If this replaced an old saved banner, delete the old one now
+        if (replacesId) {
+          bannerDelete(replacesId).catch((err) =>
+            console.error("Old banner delete failed:", err),
+          );
+        }
+      } catch (err) {
+        console.error("Upload failed:", err);
+        setPickError(
+          err instanceof Error ? err.message : "Upload করতে সমস্যা হয়েছে",
+        );
+        patchItem(localKey, { status: "error" });
+      }
+    });
+  };
+
+  // ───────────── Handlers ─────────────
+  const handleAdd = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ): Promise<void> => {
     const files = Array.from(e.target.files ?? []);
     e.target.value = "";
     if (files.length === 0) return;
 
     const remaining = MAX_IMAGES - form.getFieldValue("banners").length;
-    const valid: File[] = [];
+    const candidates: File[] = [];
     const problems: string[] = [];
 
+    // 1. Validate first (cheap, synchronous)
     for (const file of files) {
-      if (valid.length >= remaining) {
+      if (candidates.length >= remaining) {
         problems.push(`সর্বোচ্চ ${MAX_IMAGES}টি image দেওয়া যাবে`);
         break;
       }
       const error = validateFile(file);
       if (error) problems.push(error);
-      else valid.push(file);
+      else candidates.push(file);
     }
 
     setPickError(problems.length ? problems.join(" • ") : null);
-    if (valid.length) {
-      const items = valid.map(createItem);
+    if (candidates.length === 0) return;
+
+    // 2. Compress a few at a time (not all 15 at once)
+    setIsCompressing(true);
+    let items: BannerItem[] = [];
+    try {
+      const compressed = await runWithLimit(
+        candidates,
+        COMPRESS_CONCURRENCY,
+        compressFile,
+      );
+      items = compressed.map((f) => createItem(f));
       form.setFieldValue("banners", (prev) => [...prev, ...items]);
+    } finally {
+      setIsCompressing(false);
     }
+
+    // 3. Start uploading right away, in the background
+    items.forEach((item) => void uploadItem(item.localKey));
   };
 
   const openReplace = (index: number): void => {
@@ -206,7 +443,9 @@ export default function HomeBanner() {
     replaceInputRef.current?.click();
   };
 
-  const handleReplace = (e: React.ChangeEvent<HTMLInputElement>): void => {
+  const handleReplace = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ): Promise<void> => {
     const file = e.target.files?.[0];
     e.target.value = "";
     const index = replaceIndexRef.current;
@@ -222,26 +461,63 @@ export default function HomeBanner() {
     const current = form.getFieldValue("banners")[index];
     if (!current) return;
 
-    releaseUrl(current.previewUrl);
-    const next = createItem(file);
+    setIsCompressing(true);
+    let next: BannerItem | null = null;
+    try {
+      const compressed = await compressFile(file);
 
-    // bannerId আর alt একই থাকে, তাই server বুঝবে এটা update
-    form.setFieldValue("banners", (prev) =>
-      prev.map((item, i) =>
-        i === index
-          ? { ...next, bannerId: current.bannerId, alt: current.alt }
-          : item,
-      ),
-    );
+      // If the current item is already saved on the server, remember its id
+      // so it can be deleted once the new image uploads successfully.
+      const replacesId = current.file ? current.replacesId : current.bannerId;
+
+      releaseUrl(current.previewUrl);
+      next = { ...createItem(compressed, replacesId), alt: current.alt };
+
+      const created = next;
+      form.setFieldValue("banners", (prev) =>
+        prev.map((item, i) => (i === index ? created : item)),
+      );
+    } finally {
+      setIsCompressing(false);
+    }
+
+    if (next) void uploadItem(next.localKey);
   };
 
-  const handleRemove = (index: number): void => {
+  const handleRemove = async (index: number): Promise<void> => {
     const current = form.getFieldValue("banners")[index];
-    if (current) releaseUrl(current.previewUrl);
+    if (!current) return;
 
-    // শুধু UI থেকে সরানো হচ্ছে, Save চাপার আগে ডাটাবেস থেকে ডিলিট হবে না
-    form.setFieldValue("banners", (prev) => prev.filter((_, i) => i !== index));
-    setPickError(null);
+    const removeFromUi = () => {
+      releaseUrl(current.previewUrl);
+      form.setFieldValue("banners", (prev) =>
+        prev.filter((_, i) => i !== index),
+      );
+      setPickError(null);
+    };
+
+    // Not uploaded yet (still has a file): it is not on the server.
+    // If it was replacing a saved banner, that old one is removed too.
+    if (current.file) {
+      try {
+        if (current.replacesId) await bannerDelete(current.replacesId);
+        removeFromUi();
+      } catch (error) {
+        console.error("Delete Error:", error);
+        setPickError("ডিলিট করতে সমস্যা হয়েছে, আবার চেষ্টা করুন");
+      }
+      return;
+    }
+
+    // Already on the server: delete via API
+    try {
+      await bannerDelete(current.bannerId);
+      removeFromUi();
+      setSubmitMessage("ব্যানার সফলভাবে ডিলিট হয়েছে");
+    } catch (error) {
+      console.error("Delete Error:", error);
+      setPickError("ডিলিট করতে সমস্যা হয়েছে, আবার চেষ্টা করুন");
+    }
   };
 
   // ───────────── UI ─────────────
@@ -286,7 +562,6 @@ export default function HomeBanner() {
               </CardHeader>
 
               <CardContent className="space-y-4">
-                {/* Hidden inputs */}
                 <input
                   ref={addInputRef}
                   type="file"
@@ -314,105 +589,148 @@ export default function HomeBanner() {
                 {showRootError && <FieldError errors={rootErrors} />}
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                  {banners.map((banner, index) => (
-                    <div
-                      key={banner.bannerId}
-                      className="overflow-hidden rounded-lg border bg-card"
-                    >
-                      <div className="relative aspect-video bg-muted">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={banner.previewUrl}
-                          alt={banner.alt || `Banner ${index + 1}`}
-                          className="h-full w-full object-cover"
-                        />
-                        <Badge
-                          className="absolute left-2 top-2"
-                          variant="secondary"
-                        >
-                          #{index + 1}
-                        </Badge>
-                        {banner.file && (
-                          <Badge className="absolute right-2 top-2">নতুন</Badge>
-                        )}
-                      </div>
+                  {banners.map((banner, index) => {
+                    const isUploading = banner.status === "uploading";
+                    const hasError = banner.status === "error";
 
-                      <div className="space-y-2 p-3">
-                        <form.Field name={`banners[${index}].alt`}>
-                          {(altField) => {
-                            const invalid =
-                              altField.state.meta.isTouched &&
-                              !altField.state.meta.isValid;
-                            return (
-                              <Field data-invalid={invalid}>
-                                <Input
-                                  id={`alt-${banner.bannerId}`}
-                                  name={altField.name}
-                                  value={altField.state.value}
-                                  placeholder="Alt text (ঐচ্ছিক)"
-                                  aria-invalid={invalid}
-                                  onBlur={altField.handleBlur}
-                                  onChange={(e) =>
-                                    altField.handleChange(e.target.value)
-                                  }
-                                />
-                                {invalid && (
-                                  <FieldError
-                                    errors={altField.state.meta.errors}
+                    return (
+                      <div
+                        key={banner.localKey}
+                        className="overflow-hidden rounded-lg border bg-card"
+                      >
+                        <div className="relative aspect-video bg-muted">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={banner.previewUrl}
+                            alt={banner.alt || `Banner ${index + 1}`}
+                            className="h-full w-full object-cover"
+                          />
+                          <Badge
+                            className="absolute left-2 top-2"
+                            variant="secondary"
+                          >
+                            #{index + 1}
+                          </Badge>
+                          {banner.file && (
+                            <Badge className="absolute right-2 top-2">
+                              নতুন
+                            </Badge>
+                          )}
+
+                          {isUploading && (
+                            <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-background/70 text-sm">
+                              <Loader2 className="h-6 w-6 animate-spin" />
+                              <span>Upload হচ্ছে...</span>
+                            </div>
+                          )}
+
+                          {hasError && (
+                            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-background/80 text-sm">
+                              <span className="font-medium text-destructive">
+                                Upload ব্যর্থ হয়েছে
+                              </span>
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                                onClick={() => void uploadItem(banner.localKey)}
+                              >
+                                <RotateCw className="mr-1.5 h-4 w-4" />
+                                Retry
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="space-y-2 p-3">
+                          <form.Field name={`banners[${index}].alt`}>
+                            {(altField) => {
+                              const invalid =
+                                altField.state.meta.isTouched &&
+                                !altField.state.meta.isValid;
+                              return (
+                                <Field data-invalid={invalid}>
+                                  <Input
+                                    id={`alt-${banner.localKey}`}
+                                    name={altField.name}
+                                    value={altField.state.value}
+                                    placeholder="Alt text (ঐচ্ছিক)"
+                                    aria-invalid={invalid}
+                                    onBlur={altField.handleBlur}
+                                    onChange={(e) =>
+                                      altField.handleChange(e.target.value)
+                                    }
                                   />
-                                )}
-                              </Field>
-                            );
-                          }}
-                        </form.Field>
+                                  {invalid && (
+                                    <FieldError
+                                      errors={altField.state.meta.errors}
+                                    />
+                                  )}
+                                </Field>
+                              );
+                            }}
+                          </form.Field>
 
-                        <form.Field name={`banners[${index}].file`}>
-                          {(fileField) =>
-                            fileField.state.meta.errors.length > 0 ? (
-                              <FieldError
-                                errors={fileField.state.meta.errors}
-                              />
-                            ) : null
-                          }
-                        </form.Field>
+                          <form.Field name={`banners[${index}].file`}>
+                            {(fileField) =>
+                              fileField.state.meta.errors.length > 0 ? (
+                                <FieldError
+                                  errors={fileField.state.meta.errors}
+                                />
+                              ) : null
+                            }
+                          </form.Field>
 
-                        <div className="flex gap-2">
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            className="flex-1"
-                            onClick={() => openReplace(index)}
-                          >
-                            <RefreshCw className="mr-1.5 h-4 w-4" />
-                            Replace
-                          </Button>
-                          <Button
-                            type="button"
-                            variant="destructive"
-                            size="sm"
-                            className="flex-1"
-                            onClick={() => handleRemove(index)}
-                          >
-                            <Trash2 className="mr-1.5 h-4 w-4" />
-                            Remove
-                          </Button>
+                          <div className="flex gap-2">
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              className="flex-1"
+                              disabled={isCompressing || isUploading}
+                              onClick={() => openReplace(index)}
+                            >
+                              <RefreshCw className="mr-1.5 h-4 w-4" />
+                              Replace
+                            </Button>
+                            <Button
+                              type="button"
+                              variant="destructive"
+                              size="sm"
+                              className="flex-1"
+                              disabled={isCompressing || isUploading}
+                              onClick={() => handleRemove(index)}
+                            >
+                              <Trash2 className="mr-1.5 h-4 w-4" />
+                              Remove
+                            </Button>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
 
-                  {remaining > 0 && (
+                  {(remaining > 0 || isCompressing) && (
                     <button
                       type="button"
+                      disabled={isCompressing}
                       onClick={() => addInputRef.current?.click()}
-                      className="flex aspect-video min-h-40 flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed text-sm text-muted-foreground transition-colors hover:border-primary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      className="flex aspect-video min-h-40 flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed text-sm text-muted-foreground transition-colors hover:border-primary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-70"
                     >
-                      <ImagePlus className="h-7 w-7" />
-                      <span>Image যোগ করুন</span>
-                      <span className="text-xs">
-                        আরও {remaining}টি দেওয়া যাবে
-                      </span>
+                      {isCompressing ? (
+                        <>
+                          <Loader2 className="h-7 w-7 animate-spin" />
+                          <span>Image প্রসেস হচ্ছে...</span>
+                        </>
+                      ) : (
+                        <>
+                          <ImagePlus className="h-7 w-7" />
+                          <span>Image যোগ করুন</span>
+                          <span className="text-xs">
+                            আরও {remaining}টি দেওয়া যাবে
+                          </span>
+                        </>
+                      )}
                     </button>
                   )}
                 </div>
@@ -422,13 +740,25 @@ export default function HomeBanner() {
                 <p role="status" className="text-sm text-muted-foreground">
                   {submitMessage}
                 </p>
-                <form.Subscribe selector={(state) => state.isSubmitting}>
-                  {(isSubmitting) => (
-                    <Button type="submit" disabled={isSubmitting}>
-                      {isSubmitting && (
+                <form.Subscribe
+                  selector={(state) => ({
+                    isSubmitting: state.isSubmitting,
+                    uploading: state.values.banners.filter(
+                      (b) => b.status === "uploading",
+                    ).length,
+                  })}
+                >
+                  {({ isSubmitting, uploading }) => (
+                    <Button
+                      type="submit"
+                      disabled={isSubmitting || isCompressing || uploading > 0}
+                    >
+                      {(isSubmitting || uploading > 0) && (
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       )}
-                      Save changes
+                      {uploading > 0
+                        ? `Uploading ${uploading}...`
+                        : "Save changes"}
                     </Button>
                   )}
                 </form.Subscribe>
