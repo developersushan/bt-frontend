@@ -11,6 +11,7 @@ import { getAllGames } from "@/services/games.service";
 import AnnouncementModal from "./_home/AnnouncementModal";
 import { NavbarActionButtons } from "@/components/shared/navbar/NavbarActionButtons";
 import { getUserInfo } from "@/services/auth.service";
+import { getUserBanners } from "@/services/banner.service";
 
 const CommonHomePage = async () => {
   const userInfo = await getUserInfo();
@@ -19,12 +20,19 @@ const CommonHomePage = async () => {
     queryKey: ["games"],
     queryFn: () => getAllGames(),
   });
+  await queryClient.prefetchQuery({
+    queryKey: ["banners"],
+    queryFn: () => getUserBanners(),
+    staleTime: 60 * 1000,
+  });
 
   return (
     <div className="container mt-8">
       <AnnouncementModal />
       <TopBannerHeader />
-      <BannerCarousel />
+      <HydrationBoundary state={dehydrate(queryClient)}>
+        <BannerCarousel />
+      </HydrationBoundary>
       {userInfo?.user?.id && (
         <div className="md:hidden block mt-4">
           <NavbarActionButtons className="md:block hidden" />
