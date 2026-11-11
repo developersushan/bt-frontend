@@ -70,7 +70,7 @@ export function BannerCarousel() {
         className="w-full"
       >
         <CarouselContent>
-          {banners.map((banner, index) => (
+          {banners?.map((banner, index) => (
             <CarouselItem key={banner.id}>
               <div className="relative w-full h-55 sm:62.5">
                 <Image
@@ -88,7 +88,7 @@ export function BannerCarousel() {
 
       {/* Pill / Dash Indicators */}
       <div className="absolute bottom-3 left-0 right-0 z-10 flex justify-center items-center gap-1.5 pointer-events-auto">
-        {banners.map((banner, index) => (
+        {banners?.map((banner, index) => (
           <button
             key={String(banner.id)}
             type="button"
