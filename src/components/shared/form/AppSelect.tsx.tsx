@@ -2,49 +2,87 @@ import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { cn } from "cn";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-type Option = {
+interface Option {
   label: string;
   value: string;
-};
+}
 
-type Props = {
-  className?: string;
-  field: any;
-  label: string;
+interface AppSelectProps {
+  label?: string;
   options: Option[];
-};
+  placeholder?: string;
+  className?: string;
+  field?: {
+    state: {
+      value: any;
+      meta?: {
+        isTouched?: boolean;
+        errors?: any;
+      };
+    };
+    handleChange: (val: any) => void;
+  };
+  value?: string;
+  onValueChange?: (val: string) => void;
+}
 
-export default function AppSelect({ field, label, options, className }: Props) {
+export const AppSelect: React.FC<AppSelectProps> = ({
+  label,
+  options,
+  placeholder = "Select option",
+  className = "",
+  field,
+  value,
+  onValueChange,
+}) => {
+  const currentValue = field ? field.state.value : value;
+
+  const handleChange = (val: string) => {
+    if (field) {
+      field.handleChange(val);
+    }
+    if (onValueChange) {
+      onValueChange(val);
+    }
+  };
+
+  const errors = field?.state?.meta?.errors || [];
+  const isTouched = field?.state?.meta?.isTouched;
+
   return (
-    <div className={cn("space-y-1", className)}>
-      <Label className="shrink-0">{label}</Label>
+    <div className={`space-y-1.5 ${className}`}>
+      {label && <Label>{label}</Label>}
+
       <Select
-        value={field.state.value || ""}
-        onValueChange={(value) => field.handleChange(value)}
+        value={currentValue || ""}
+        onValueChange={(val) => {
+          if (val !== null) {
+            handleChange(val);
+          }
+        }}
       >
         <SelectTrigger className="w-full">
-          <SelectValue placeholder={`Select  ${label}`} />
+          <SelectValue placeholder={placeholder} />
         </SelectTrigger>
-
         <SelectContent>
-          <SelectGroup>
-            {options.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectGroup>
+          {options.map((option) => (
+            <SelectItem key={option.value} value={option.value}>
+              {option.label}
+            </SelectItem>
+          ))}
         </SelectContent>
       </Select>
+
+      {isTouched && errors.length > 0 && (
+        <p className="text-xs text-red-500">{errors.join(", ")}</p>
+      )}
     </div>
   );
-}
+};

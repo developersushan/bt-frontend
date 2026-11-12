@@ -4,10 +4,14 @@ import AppError from "@/helpers/AppError";
 import { deleteCookie, getCookie, setCookie } from "@/lib/cookieUtlis";
 import { fetcher } from "@/lib/fetcher";
 import {
+  changePasswordZodSchema,
+  IChangePasswordPayload,
   ILoginPayload,
   IRegisterPayload,
   loginZodSchema,
   registerZodSchema,
+  updateProfile,
+  UpdateProfilePayload,
 } from "@/zod/auth.validation";
 import type { UserInfoResponse } from "@/types/auth.types";
 import status from "http-status";
@@ -25,7 +29,7 @@ export const loginAction = async (payload: ILoginPayload) => {
     const firstError =
       parsedPayload.error.issues[0]?.message ?? "Invalid Input";
     return {
-      success: false,
+      status: "error",
       message: firstError,
     };
   }
@@ -42,7 +46,7 @@ export const loginAction = async (payload: ILoginPayload) => {
     });
     if (!res?.token) {
       return {
-        success: false,
+        status: "error",
         message: res?.message || "লগইন ব্যর্থ হয়েছে",
       };
     }
@@ -62,7 +66,6 @@ export const loginAction = async (payload: ILoginPayload) => {
         ? "/admin"
         : "/";
     return {
-      success: true,
       message: res.message,
       role,
       data: res,
@@ -70,7 +73,7 @@ export const loginAction = async (payload: ILoginPayload) => {
     };
   } catch (error: any) {
     return {
-      success: false,
+      status: "error",
       message: error?.message || "Something went wrong during login",
     };
   }
@@ -82,7 +85,7 @@ export const registerAction = async (payload: IRegisterPayload) => {
     const firstError =
       parsedPayload.error.issues[0]?.message ?? "Invalid Input";
     return {
-      success: false,
+      status: "error",
       message: firstError,
     };
   }
@@ -101,20 +104,18 @@ export const registerAction = async (payload: IRegisterPayload) => {
     });
     if (!res?.token) {
       return {
-        success: false,
         message: res?.message || "রেজিস্ট্রার ব্যর্থ হয়েছে",
       };
     }
     await setCookie("token", res.token, rememberMe);
 
     return {
-      success: true,
       message: res.message,
       data: res,
     };
   } catch (error: any) {
     return {
-      success: false,
+      status: "error",
       message: error?.message || "Something went wrong during register",
     };
   }
@@ -138,7 +139,6 @@ export async function getUserInfo() {
     return null;
   }
 }
-
 
 export async function logoutAction(): Promise<{
   message?: string;
@@ -164,3 +164,73 @@ export async function logoutAction(): Promise<{
     await deleteCookie("token");
   }
 }
+
+export const changePasswordAction = async (payload: IChangePasswordPayload) => {
+  const parsedPayload = changePasswordZodSchema.safeParse(payload);
+  if (!parsedPayload.success) {
+    const firstError = parsedPayload.error.issues[0].message || "Invalid Input";
+    return {
+      status: "error",
+      message: firstError,
+    };
+  }
+
+  try {
+    const response = await fetcher<any>(
+      `/user/personal-center/change-password`,
+      {
+        method: "POST",
+        body: parsedPayload.data,
+      },
+    );
+    return response;
+  } catch (error: any) {
+    console.log(error);
+    const errorMessage =
+      error?.response?.data?.message ||
+      error?.response?.data?.body?.message ||
+      error?.data?.message ||
+      error?.message ||
+      "Failed to change password";
+
+    return {
+      status: "error",
+      message: errorMessage,
+    };
+  }
+};
+
+export const profileUpdateAction = async (payload: UpdateProfilePayload) => {
+  const parsedPayload = updateProfile.safeParse(payload);
+  if (!parsedPayload.success) {
+    const firstError = parsedPayload.error.issues[0].message || "Invalid Input";
+    return {
+      status: "error",
+      message: firstError,
+    };
+  }
+
+  try {
+    const response = await fetcher<any>(
+      "/user/personal-center/update-profile",
+      {
+        method: "POST",
+        body: parsedPayload.data,
+      },
+    );
+    return response;
+  } catch (error: any) {
+    console.log(error);
+    const errorMessage =
+      error?.response?.data?.message ||
+      error?.response?.data?.body?.message ||
+      error?.data?.message ||
+      error?.message ||
+      "Failed to update profile";
+
+    return {
+      status: "error",
+      message: errorMessage,
+    };
+  }
+};

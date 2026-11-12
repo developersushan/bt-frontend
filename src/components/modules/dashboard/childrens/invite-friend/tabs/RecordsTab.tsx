@@ -4,8 +4,8 @@ import React, { useState } from "react";
 import { useForm } from "@tanstack/react-form";
 import { Calendar, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import AppSelect from "@/components/shared/form/AppSelect.tsx";
 import DynamicTable, { ColumnConfig } from "../../../DynamicTable";
+import { AppSelect } from "@/components/shared/form/AppSelect.tsx";
 
 
 const VENDOR_OPTIONS = [
