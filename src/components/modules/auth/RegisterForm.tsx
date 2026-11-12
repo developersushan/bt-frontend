@@ -20,7 +20,6 @@ import GooleFacebookButton from "./GooleFacebookButton";
 import { useMutation } from "@tanstack/react-query";
 import { registerAction } from "@/services/auth.service";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 interface RegisterFormProps {
   onSwitchToLogin?: () => void;
 }
@@ -45,7 +44,7 @@ const RegisterForm = ({ onSwitchToLogin }: RegisterFormProps) => {
       const toastId = toast.loading("Registering...");
       try {
         const result = await mutateAsync(value);
-        if (!result.success) {
+        if (result.status !== "success") {
           toast.error(result.message, { id: toastId });
           return;
         }

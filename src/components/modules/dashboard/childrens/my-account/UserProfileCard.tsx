@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import {
@@ -7,11 +8,15 @@ import {
   Banknote,
   Edit3,
   ShieldAlert,
+  EyeOff,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-export function UserProfileCard() {
+import { useState } from "react";
+export function UserProfileCard({ data }: any) {
+  console.log(data);
+  const [show, setShow] = useState(false);
   return (
-    <div className="w-full bg-white rounded-2xl shadow-lg p-5 border border-slate-100 flex flex-col justify-between select-none">
+    <div className="w-full bg-white rounded-2xl shadow-lg p-5 h-full border border-slate-100 flex flex-col justify-between select-none">
       <div>
         {/* Profile Header with Banner Overlay */}
         <div className="relative bg-linear-to-r from-slate-200 via-slate-100 to-slate-200 rounded-xl p-4 mb-4 flex items-center justify-between overflow-hidden">
@@ -30,7 +35,7 @@ export function UserProfileCard() {
             <div>
               <div className="flex items-center gap-2">
                 <span className="bg-slate-700/80 text-amber-300 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 shadow-sm">
-                  <span>🛡️</span> VIP0
+                  <span>🛡️</span> {data?.user_info?.vip_level}
                 </span>
                 <span className="bg-amber-400 text-amber-950 text-[10px] font-bold px-1.5 py-0.5 rounded-full">
                   🎁
@@ -38,7 +43,7 @@ export function UserProfileCard() {
               </div>
               <div className="flex items-center gap-1 mt-1">
                 <span className="font-bold text-slate-800 text-sm">
-                  01612302011
+                  {data?.user_info?.phone}
                 </span>
                 <Edit3
                   size={13}
@@ -46,7 +51,7 @@ export function UserProfileCard() {
                 />
               </div>
               <p className="text-[10px] text-slate-500 mt-0.5">
-                Joined 2026-10-03
+                {data?.user_info?.joined_date}
               </p>
             </div>
           </div>
@@ -56,29 +61,32 @@ export function UserProfileCard() {
           </div>
         </div>
 
-        {/* User Account ID */}
-        <div className="flex items-center gap-1.5 text-xs text-slate-500 mb-2 px-1">
-          <span>01612302011</span>
-          <span className="w-3.5 h-3.5 rounded-full bg-slate-300 text-white text-[9px] flex items-center justify-center font-bold">
-            ✓
-          </span>
-        </div>
-
         {/* Balance Display */}
         <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-4 px-1">
           <div className="flex items-baseline gap-1">
             <span className="text-xl font-extrabold text-slate-900">৳</span>
-            <span className="text-2xl font-black text-slate-900">0.00</span>
+            <span className="text-2xl font-black text-slate-900">
+              {show ? "-" : <>{data?.balance}</>}
+            </span>
           </div>
           <div className="flex items-center gap-2 text-slate-400">
             <RefreshCw
               size={16}
               className="cursor-pointer hover:text-slate-700 transition-colors"
             />
-            <Eye
-              size={16}
-              className="cursor-pointer hover:text-slate-700 transition-colors"
-            />
+            <button onClick={() => setShow((prev) => !prev)}>
+              {show ? (
+                <EyeOff
+                  size={16}
+                  className="cursor-pointer hover:text-slate-700 transition-colors"
+                />
+              ) : (
+                <Eye
+                  size={16}
+                  className="cursor-pointer hover:text-slate-700 transition-colors"
+                />
+              )}
+            </button>
           </div>
         </div>
 
@@ -91,7 +99,7 @@ export function UserProfileCard() {
             </div>
             <div>
               <p className="text-xs font-semibold text-slate-700">
-                0 deposit request processing.
+                {data?.pending_requests?.withdraw} deposit request processing.
               </p>
               <p className="text-[10px] text-slate-400">04/10/2026</p>
             </div>
@@ -106,7 +114,7 @@ export function UserProfileCard() {
             </div>
             <div>
               <p className="text-xs font-semibold text-slate-700">
-                0 withdrawal request processing.
+                {data?.pending_requests?.deposit} withdrawal request processing.
               </p>
               <p className="text-[10px] text-slate-400">04/10/2026</p>
             </div>

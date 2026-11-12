@@ -1,4 +1,4 @@
-import AppSelect from "@/components/shared/form/AppSelect.tsx";
+import { AppSelect } from "@/components/shared/form/AppSelect.tsx";
 import { Button } from "@/components/ui/button";
 import { Calendar, Search } from "lucide-react";
 import React from "react";
