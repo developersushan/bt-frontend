@@ -13,7 +13,6 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useState } from "react";
 export function UserProfileCard({ data }: any) {
-  console.log(data);
   const [show, setShow] = useState(false);
   return (
     <div className="w-full bg-white rounded-2xl shadow-lg p-5 h-full border border-slate-100 flex flex-col justify-between select-none">
@@ -99,9 +98,12 @@ export function UserProfileCard({ data }: any) {
             </div>
             <div>
               <p className="text-xs font-semibold text-slate-700">
-                {data?.pending_requests?.withdraw} deposit request processing.
+                {data?.pending_requests?.withdraw?.count} deposit request
+                processing.
               </p>
-              <p className="text-[10px] text-slate-400">04/10/2026</p>
+              <p className="text-[10px] text-slate-400">
+                {data?.pending_requests?.withdraw?.date}
+              </p>
             </div>
           </div>
 
@@ -114,9 +116,12 @@ export function UserProfileCard({ data }: any) {
             </div>
             <div>
               <p className="text-xs font-semibold text-slate-700">
-                {data?.pending_requests?.deposit} withdrawal request processing.
+                {data?.pending_requests?.deposit?.count} withdrawal request
+                processing.
               </p>
-              <p className="text-[10px] text-slate-400">04/10/2026</p>
+              <p className="text-[10px] text-slate-400">
+                {data?.pending_requests?.deposit?.date}
+              </p>
             </div>
           </div>
         </div>
