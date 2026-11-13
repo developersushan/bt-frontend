@@ -14,7 +14,7 @@ export default function MyAccountContent() {
   if (isLoading) {
     return <LoadingState />;
   }
-
+console.log(data);
   return (
     <div className="min-h-screen md:min-h-0 md:h-145 flex flex-col ">
       <MobileHeader title="My Account" />
